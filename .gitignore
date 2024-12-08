@@ -1,5 +1,33 @@
+# R specific
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
 *.Rproj
+
+# Mac specific
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Data files (adjust based on your needs)
+*.csv
+*.xlsx
+*.xls
+*.rds
+*.RData
+
+# Output files
+*.html
+*.pdf
+*.docx
+*.doc
+
+# R Environment Variables
+.Renviron
+.Rprofile
+
+# Temporary files
+*~
+.#*
+.Rproj.user/

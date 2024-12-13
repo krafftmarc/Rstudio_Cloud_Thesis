@@ -1,0 +1,146 @@
+﻿Local Here(
+	(table1 = New Table( "Tyree Chardonnay Harvest 8_24_2022",
+		Add Rows( 49 ),
+		New Script(
+			"Source",
+			Open(
+				"$HOME/Library/Mobile Documents/com~apple~CloudDocs/R/R/Version Control/Heat_Water_Acclimation_Masters_Thesis/Data/Tyree_2022_ReadOnly/Yield_2022/Tyree Chardonnay Harvest 8_24_2022.csv",
+				columns(
+					New Column( "Block", Character, "Nominal" ),
+					New Column( "Row", Numeric, "Continuous", Format( "Best", 12 ) ),
+					New Column( "Vine",
+						Numeric,
+						"Continuous",
+						Format( "Best", 12 )
+					),
+					New Column( "ID", Character, "Nominal" ),
+					New Column( "Weight (Kg)",
+						Numeric,
+						"Continuous",
+						Format( "Best", 12 )
+					),
+					New Column( "Cluster Count",
+						Numeric,
+						"Continuous",
+						Format( "Best", 12 )
+					)
+				),
+				Import Settings(
+					End Of Line( CRLF, CR, LF ),
+					End Of Field( Comma, CSV( 1 ) ),
+					Strip Quotes( 0 ),
+					Use Apostrophe as Quotation Mark( 0 ),
+					Use Regional Settings( 0 ),
+					Scan Whole File( 1 ),
+					Treat empty columns as numeric( 0 ),
+					CompressNumericColumns( 0 ),
+					CompressCharacterColumns( 0 ),
+					CompressAllowListCheck( 0 ),
+					Labels( 1 ),
+					Column Names Start( 1 ),
+					First Named Column( 1 ),
+					Data Starts( 2 ),
+					Lines To Read( "All" ),
+					Year Rule( "20xx" )
+				)
+			)
+		),
+		New Column( "Block",
+			Character,
+			"Nominal",
+			Set Values(
+				{"A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A",
+				"A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "B", "B",
+				"B", "B", "B", "B", "B", "B", "B", "B", "B", "B", "B", "B", "B", "B",
+				"B", "B", "B", "B", "B", "B", "B", "B"}
+			)
+		),
+		New Column( "Row",
+			Numeric,
+			"Nominal",
+			Format( "Best", 12 ),
+			Set Values(
+				[2, 2, 2, 2, 3, 3, 3, 3, 4, 6, 6, 6, 6, 7, 7, 7, 7, 8, 10, 10, 10,
+				10, 11, 11, 11, 2, 2, 3, 3, 3, 3, 3, 3, 6, 6, 7, 7, 7, 7, 7, 7, 10,
+				10, 10, 10, 11, 11, 11, 11]
+			)
+		),
+		New Column( "Vine",
+			Numeric,
+			"Nominal",
+			Format( "Best", 12 ),
+			Set Values(
+				[2, 4, 16, 20, 7, 10, 12, 21, 2, 2, 9, 16, 18, 5, 9, 11, 24, 2, 2, 4,
+				14, 17, 7, 11, 21, 3, 16, 8, 9, 10, 21, 22, 23, 3, 14, 5, 6, 7, 22,
+				23, 24, 3, 17, 18, 19, 5, 6, 7, 22]
+			)
+		),
+		New Column( "ID",
+			Character,
+			"Nominal",
+			Set Values(
+				{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+				"N", "O", "P", "Q", "R", "T", "U", "V", "W", "X", "Y", "Z", "AA",
+				"BB", "CC", "DD", "EE", "FF", "GG", "HH", "II", "JJ", "KK", "LL",
+				"MM", "NN", "OO", "PP", "QQ", "RR", "SS", "TT", "UU", "VV", "WW",
+				"XX"}
+			)
+		),
+		New Column( "Weight (Kg)",
+			Numeric,
+			"Continuous",
+			Format( "Best", 12 ),
+			Set Values(
+				[3.65, 5.1, 0, 0, 2.6, 1.25, 1.4, 0.05, 3.45, 2.85, 0.6, 4.65, 4.05,
+				3.3, 4.05, 3.15, 3.85, 2.2, 5.4, 2.8, 2.85, 1.95, 3.75, 5.5, 3.65,
+				5.05, 5.15, 6.55, 6.65, 6.3, 4.25, 4.55, 7.15, 8.9, 6.8, 3.7, 7.65,
+				7.4, 5.65, 6.5, 6.65, 8.85, 8.6, 7.05, 5.75, 8.1, 5.75, 6.15, 4.1]
+			)
+		),
+		New Column( "Cluster Count",
+			Numeric,
+			"Continuous",
+			Format( "Best", 12 ),
+			Set Values(
+				[23, 26, 7, 3, 11, 7, 13, 2, 23, 21, 7, 26, 21, 17, 25, 18, 22, 19,
+				28, 19, 16, 13, 23, 33, 16, 23, 34, 28, 38, 37, 27, 24, 40, 36, 39,
+				15, 37, 40, 38, 38, 31, 46, 32, 32, 35, 35, 34, 36, 22]
+			)
+		),
+		New Column( "Weight/Clstr",
+			Numeric,
+			"Continuous",
+			Format( "Best", 12 ),
+			Formula( :"Weight (Kg)"n / :Cluster Count )
+		),
+		New Column( "Tx",
+			Character,
+			"Nominal",
+			Set Values(
+				{"2L", "2L", "4L", "2L", "2L", "4L", "4L", "2L", "2L", "2L", "4L",
+				"4L", "2L", "2L", "4L", "4L", "2L", "2L", "2L", "2L", "4L", "2L",
+				"2L", "4L", "2L", "4L", "2L", "4L", "2L", "2L", "4L", "4L", "4L",
+				"4L", "2L", "4L", "4L", "4L", "4L", "4L", "4L", "4L", "4L", "4L",
+				"4L", "4L", "4L", "4L", "4L"}
+			)
+		)
+	)) << Run Formulas;
+	New Window( "Tyree Chardonnay Harvest 8_24_2022 - Graph Builder",
+		table1 << Graph Builder(
+			Size( 534, 457 ),
+			Show Control Panel( 0 ),
+			Variables( X( :ID ), Y( :"Weight/Clstr"n ), Overlay( :Tx ) ),
+			Elements(
+				Points( X, Y, Legend( 4 ) ),
+				Ellipse(
+					X,
+					Y,
+					Legend( 5 ),
+					Coverage( "95%" ),
+					Correlation( 1 ),
+					Mean Point( 1 )
+				)
+			)
+		)
+	) << Move Window( 362, 275 ) << Set Window Icon( "Trellis" );
+)

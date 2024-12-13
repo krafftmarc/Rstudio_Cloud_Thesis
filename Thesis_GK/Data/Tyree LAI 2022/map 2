@@ -1,0 +1,68 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Viticanopy - Map of Tyree North</title>
+    <style>
+
+        /* Always set the map height explicitly to define the size of the div
+         * element that contains the map. */
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        /* Optional: Makes the sample page fill the window. */
+        html, body {
+            width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+        }
+      </style>
+
+</head>
+<body>
+    <div id="map" style="width: 100%; height: 100%"></div>
+    <script>
+        let box = [38.52798622314037,-121.79033581381118,38.528669843750635,-121.78975962237631];
+        function initMap() {
+            console.log('initing map...')
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: new google.maps.LatLng(box[0], box[1]),
+                zoom: 25,
+                mapTypeId: 'satellite',
+                styles: [
+                    {
+                        featureType: 'water',
+                        stylers: [{ color: '#c3cfdd'}]
+                    },
+                    {
+                        featureType: 'poi',
+                        stylers: [{visibility: 'off'}]
+                    }
+                ]
+            });
+            const imageUrl = 'https://viticanopy.com.au/api/map/heatmap/9f46211c9ee940d6b9788e980b4d76e6';
+            const bounds = new google.maps.LatLngBounds(new google.maps.LatLng(box[0], box[1]), new google.maps.LatLng(box[2], box[3]));
+
+
+            map.fitBounds(bounds);
+            const imageOverlay = new google.maps.GroundOverlay(imageUrl, bounds, {opacity: 1});
+            imageOverlay.setMap(map);
+
+            google.maps.event.addListenerOnce(map, 'idle', function(){
+                console.log('loaded')
+            });
+
+            // const img = new Image();
+            // img.src = imageUrl;
+            // img.type = 'jpeg'
+            // img.onload = function () {
+            //     console.log('done!!');
+            // }
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqNwgyL-ucl1LuPJYSWT2bsvbhavnlyWw&libraries=visualization&callback=initMap&sensor=false"></script>
+
+</body>
+
+</html>

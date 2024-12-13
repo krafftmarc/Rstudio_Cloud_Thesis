@@ -1,0 +1,93 @@
+﻿
+
+Response clstr wt/gallon irr
+
+
+Whole Model
+
+
+Regression Plot
+
+
+
+Actual by Predicted Plot
+
+
+
+Effect Summary
+
+Source	Logworth	                         	PValue
+Tx of Tyree CS Harvest 9_16_22_2022	1.644	++++                     	0.02271
+PAI	1.003	+++                      	0.09934
+
+
+
+
+
+Residual by Predicted Plot
+
+
+
+
+Summary of Fit
+
+	
+RSquare	0.2516
+RSquare Adj	0.201707
+Root Mean Square Error	0.000155
+Mean of Response	0.000965
+Observations (or Sum Wgts)	33
+
+
+
+
+
+
+Analysis of Variance
+
+Source	DF	Sum of Squares	Mean Square	F Ratio
+Model	2	2.43141e-7	1.2157e-7	5.0428
+Error	30	7.23237e-7	2.4108e-8		Prob > F
+C. Total	32	9.66378e-7		0.0129	
+
+
+
+
+Parameter Estimates
+
+Term	Estimate	Std Error	t Ratio	Prob>|t|
+Intercept	0.0012009	0.000145	8.27	<.0001
+PAI	 -0.00008	0.000047	 -1.70	0.0993
+Tx of Tyree CS Harvest 9_16_22_2022[2L]	0.0000659	2.744e-5	2.40	0.0227
+
+
+
+
+Effect Tests
+
+Source	Nparm	DF	Sum of Squares	F Ratio	Prob > F
+PAI	   1	1	6.97298e-8	2.8924	0.0993
+Tx of Tyree CS Harvest 9_16_22_2022	   1	1	1.39069e-7	5.7686	0.0227
+
+
+
+
+PAI
+
+
+Leverage Plot
+	
+
+Tx of Tyree CS Harvest 9_16_22_2022
+
+
+Leverage Plot
+
+
+
+Least Squares Means Table
+
+Level	Least Sq Mean	Std Error	Mean
+2L	0.00102499	0.00003678	0.001031
+4L	0.00089317	0.00004033	0.000886
+

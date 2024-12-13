@@ -1,0 +1,107 @@
+﻿
+
+Response WUEi
+
+
+Whole Model
+
+
+Regression Plot
+
+
+
+Actual by Predicted Plot
+
+
+
+Effect Summary
+
+Source	Logworth	                         	PValue
+Tair	6.224	++++++++++++++++         	0.00000
+Tx of Subset of licor_comb	1.670	++++                     	0.02138
+
+
+
+
+
+Lack Of Fit
+
+Source	DF	Sum of Squares	Mean Square	F Ratio
+Lack Of Fit	182	957414568	5260520	434.1343
+Pure Error	2	24235	12117		Prob > F
+Total Error	184	957438803		0.0023	
+					Max RSq
+				1.0000	
+
+
+
+
+Residual by Predicted Plot
+
+
+
+
+Summary of Fit
+
+	
+RSquare	0.133187
+RSquare Adj	0.119054
+Root Mean Square Error	2281.112
+Mean of Response	2600.925
+Observations (or Sum Wgts)	188
+
+
+
+
+
+
+Analysis of Variance
+
+Source	DF	Sum of Squares	Mean Square	F Ratio
+Model	3	147111185	49037062	9.4239
+Error	184	957438803	5203471.8		Prob > F
+C. Total	187	1104549988		<.0001	
+
+
+
+
+Parameter Estimates
+
+Term	Estimate	Std Error	t Ratio	Prob>|t|
+Intercept	6929.542	946.3694	7.32	<.0001
+Tair	 -151.9278	29.36632	 -5.17	<.0001
+Tx of Subset of licor_comb[2L]	1053.4713	375.9224	2.80	0.0056
+Tx of Subset of licor_comb[4L]	621.83016	375.805	1.65	0.0997
+
+
+
+
+Effect Tests
+
+Source	Nparm	DF	Sum of Squares	F Ratio	Prob > F
+Tair	   1	1	139273527	26.7655	<.0001
+Tx of Subset of licor_comb	   2	2	40866314	3.9268	0.0214
+
+
+
+
+Tair
+
+
+Leverage Plot
+	
+
+Tx of Subset of licor_comb
+
+
+Leverage Plot
+
+
+
+Least Squares Means Table
+
+Level	Least Sq Mean	Std Error	Mean
+2L	2867.0988	224.72078	2755.41
+4L	2435.4576	258.31376	2455.38
+NaN	138.3259	986.06078	1815.31
+

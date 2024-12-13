@@ -1,0 +1,28 @@
+Notes on the Li-Cor data:
+
+-Each row is the average of 3 readings per vine. We gathered data for each vine in 3 different leaves.
+
+-For both xlsx files the only "relevant" sheets are: 
+	
+		Block A & Block B
+
+-EJF 1 & EJF2 sheets are just the referenced original files from each console, the data in these sheets 
+is not organized nor clean
+
+- "Remarks" sheets are only used for references in the console, can be ignored
+
+- Data collection was performed with different designs in each heatwave:
+@ 1st event was randomized data gathering. Meaning that we sampled different vines in every time slot 
+
+@ 2nd event we selected 9 vines in each block and we took the Li-Cor readings at the same vines
+in every time slot
+
+We ran into unexpected issues with one of the consoles on the 7AM reading @2nd event. Therefore, we have no
+data recorded for: Block B-7AM. This pushed our next reading quite a bit (e.g., 10 AM readings were collected
+at ~11AM). This was corrected later in the day when we got some folks to help us sample. 
+
+ 
+
+
+
+ 

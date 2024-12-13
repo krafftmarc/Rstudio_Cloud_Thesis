@@ -11,12 +11,13 @@
 .LSOverride
 
 # Data files (adjust based on your needs)
-*.csv
-*.xlsx
-*.xls
-*.rds
-*.RData
 
+*.RData
+# Add specific exceptions for your thesis data
+!Thesis_GK/Data/*.csv
+!Thesis_GK/Data/*.xlsx
+!Thesis_GK/*.csv
+!Thesis_GK/*.xlsx
 # Output files
 *.html
 *.pdf
@@ -31,3 +32,5 @@
 *~
 .#*
 .Rproj.user/
+.Renviron
+.Renviron

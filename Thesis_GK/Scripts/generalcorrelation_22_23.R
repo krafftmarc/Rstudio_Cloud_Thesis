@@ -1,22 +1,26 @@
 # Required packages
 library(tidyverse)
-install.packages("lme4")
 library(lme4)
-install.packages("car")
 library(car)
-install.packages("emmeans")
 library(emmeans)
 library(ggplot2)
 library(lubridate)
 library(nlme)
-install.packages("readxl")  # Install if not already installed
 library(readxl)
 
 
+
 # Data import and preparation
-licor_data <- read.csv("~/Library/Mobile Documents/com~apple~CloudDocs/R/R/Version Control/Heat_Water_Acclimation_Masters_Thesis/Heat_Water_Acclimation_Masters_Thesis_GK/Thesis_GK/Data/2023/2023/Baseline -WatPot _ LiCor/clean_licor_2023_extract.csv")
-wp_data <- readxl::read.excel("~/Library/Mobile Documents/com~apple~CloudDocs/R/R/Version Control/Heat_Water_Acclimation_Masters_Thesis/Heat_Water_Acclimation_Masters_Thesis_GK/Thesis_GK/Data/2023/2023/Baseline -WatPot _ LiCor/water_pot copy/Clean_Tyree Water Potentials 2023.xlsx")
-potential_data <- read.csv("Untitled spreadsheet - W - Potentials.csv")
+licor_data <- clean_licor_2023_extract
+wp_data <- Clean_Tyree_Water_Potentials_2023
+
+# Let's examine the structure of your datasets
+str(licor_data)
+str(wp_data)
+
+# And see what columns are available
+names(licor_data)
+names(wp_data)
 
 # Convert date formats and create time periods
 licor_data$date <- as.POSIXct(licor_data$date, format="%Y%m%d %H:%M:%S")

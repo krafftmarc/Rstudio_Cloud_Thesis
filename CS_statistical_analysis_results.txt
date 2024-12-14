@@ -1,0 +1,67 @@
+Cabernet Sauvignon Water Potential Analysis Results
+===============================================
+
+1. Sample Sizes
+--------------
+         
+          1PM 5AM
+  2L      272  35
+  4L      214  55
+  Control 533 216
+
+2. Overall ANOVA Results
+----------------------
+              Df Sum Sq Mean Sq F value Pr(>F)    
+Treatment      2   2196    1098   96.19 <2e-16 ***
+Time_id        1  10756   10756  942.43 <2e-16 ***
+Residuals   1315  15009      11                   
+---
+Signif. codes:  
+0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+6 observations deleted due to missingness
+
+3. Treatment Comparisons (Tukey HSD)
+----------------------------------
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = PSI ~ Treatment + Time_id, data = wp_filtered)
+
+$Treatment
+                diff        lwr      upr     p adj
+4L-2L      0.7242255 0.06170699 1.386744 0.0281184
+Control-2L 2.8958333 2.35750352 3.434163 0.0000000
+Control-4L 2.1716078 1.60765459 2.735561 0.0000000
+
+
+4. Time-specific Analyses
+------------------------
+
+Morning (5AM):
+             Df Sum Sq Mean Sq F value Pr(>F)    
+Treatment     2  326.0  163.01   68.74 <2e-16 ***
+Residuals   303  718.6    2.37                   
+---
+Signif. codes:  
+0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Afternoon (1PM):
+              Df Sum Sq Mean Sq F value   Pr(>F)    
+Treatment      2    557  278.37   19.72 3.97e-09 ***
+Residuals   1010  14257   14.12                     
+---
+Signif. codes:  
+0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+6 observations deleted due to missingness
+
+5. Summary Statistics by Treatment and Time
+----------------------------------------
+# A tibble: 6 × 6
+  Treatment Time_id Mean_PSI    SD     n     SE
+  <fct>     <chr>      <dbl> <dbl> <int>  <dbl>
+1 2L        1PM       -13.3   4.51   272 0.273 
+2 2L        5AM        -7.1   1.63    35 0.275 
+3 4L        1PM       -13.2   3.91   214 0.267 
+4 4L        5AM        -6.75  1.87    55 0.252 
+5 Control   1PM       -11.8   3.24   533 0.140 
+6 Control   5AM        -4.63  1.43   216 0.0973

@@ -1,0 +1,21 @@
+Statistical Summary Table:
+
+
+
+|Treatment |    R²| Sample Size|Shapiro-Wilk p-value |Normally Distributed |
+|:---------|-----:|-----------:|:--------------------|:--------------------|
+|2L        | 0.042|           0|NA                   |NA                   |
+|4L        | 0.041|           0|NA                   |NA                   |
+
+
+ANOVA Results:
+              Df Sum Sq Mean Sq F value  Pr(>F)    
+Tx             1     88    87.8   8.312 0.00397 ** 
+Block_ID       1      5     4.6   0.439 0.50762    
+Date           1   2181  2181.1 206.485 < 2e-16 ***
+Time_id        8  23907  2988.4 282.917 < 2e-16 ***
+Residuals   2476  26154    10.6                    
+---
+Signif. codes:  
+0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+330 observations deleted due to missingness

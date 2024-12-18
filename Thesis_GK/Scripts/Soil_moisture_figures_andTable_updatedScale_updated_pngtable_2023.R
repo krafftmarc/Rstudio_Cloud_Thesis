@@ -15,7 +15,7 @@ if (!dir.exists("figures")) {
   dir.create("figures")
 }
 
-# Reshape Data for Plotting
+# Reshape and Clean Data for Plotting
 soil_data_long <- soil_data %>%
   pivot_longer(
     cols = contains("Soil Moisture"),
@@ -30,8 +30,12 @@ soil_data_long <- soil_data %>%
                                    " (%)")),
     Depth_num = as.numeric(gsub("[^0-9]", "", Depth)),
     Treatment = paste(Tx, Stress, sep = "_")
-  )
+  ) %>%
+  # Filter out nonsensical VWC values
+  filter(VWC >= 0 & VWC <= 1) %>%
+  drop_na(VWC)
 
+# Define plotting functions
 # Treatment Comparison Plot
 treatment_comparison_plot <- function(data) {
   ggplot(data, aes(x = Treatment, y = VWC, fill = Stress)) +
@@ -118,7 +122,7 @@ ggsave("figures/soil_vwc_treatment_comparison_2023.png", p1, width = 10, height 
 ggsave("figures/soil_vwc_temporal_patterns_2023.png", p2, width = 12, height = 8, dpi = 300)
 ggsave("figures/soil_vwc_depth_profile_2023.png", p3, width = 10, height = 8, dpi = 300)
 
-# Generate VWC summary statistics
+# Generate VWC summary statistics with cleaned data
 summary_stats <- soil_data_long %>%
   mutate(
     Depth_Order = as.numeric(gsub("[^0-9]", "", Depth)),
@@ -147,8 +151,17 @@ png_table <- summary_stats %>%
   gt() %>%
   # Add title and subtitle
   tab_header(
-    title = "Soil Moisture (VWC) Statistics by Treatment and Depth",
+    title = md("**Soil Moisture (VWC) Statistics by Treatment and Depth**"),
     subtitle = "April 01 - September 23, 2023"
+  ) %>%
+  # Format numeric columns to display as percentages
+  fmt_percent(
+    columns = c(`Mean VWC`, `Min VWC`, `Max VWC`),
+    decimals = 1
+  ) %>%
+  fmt_number(
+    columns = SD,
+    decimals = 3
   ) %>%
   # Style the columns
   cols_align(
@@ -183,7 +196,7 @@ png_table <- summary_stats %>%
   ) %>%
   # Add source note
   tab_source_note(
-    source_note = "Note: VWC = Volumetric Water Content. NS = Non-stressed, S = Stressed conditions."
+    source_note = md("*Note:* VWC = Volumetric Water Content. NS = Non-stressed, S = Stressed conditions. Values filtered to valid VWC range (0-1).")
   ) %>%
   # Customize appearance
   opt_row_striping() %>%

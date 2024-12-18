@@ -5,7 +5,7 @@ library(scales)
 
 # Step 1: Load and Clean Data
 # Assuming your data is already loaded and cleaned
-cleaned_data <- CIMIS_growing_season_2022 %>%
+cleaned_data <- CIMIS_2023 %>%
   mutate(
     Date = mdy(Date),                   # Convert Date to Date format
     ETo = `ETo (in)`                    # Rename column for simplicity
@@ -28,7 +28,7 @@ eto_plot <- ggplot(cleaned_data, aes(x = Date, y = ETo)) +
     breaks = pretty_breaks(n = 6)
   ) +
   labs(
-    title = "Daily Reference Evapotranspiration (ETo) for 2022",
+    title = "Daily Reference Evapotranspiration (ETo) for 2023",
     subtitle = "Growing Season Data (April–October)",
     x = "Date",
     y = "ETo (inches)"
@@ -47,4 +47,5 @@ if (!dir.exists("figures")) {
 }
 
 # Step 4: Save High-Quality Plot in 'figures' Folder
-ggsave("figures/daily_eto_2022.png", plot = eto_plot, width = 8, height = 6, dpi = 600, units = "in")
+ggsave("figures/daily_eto_2023.png", plot = eto_plot, width = 8, height = 6, dpi = 600, units = "in")
+

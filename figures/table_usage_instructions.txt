@@ -1,0 +1,17 @@
+To include this table in your Scrivener thesis:
+
+1. Make sure these packages are in your LaTeX preamble:
+   \usepackage{booktabs}
+   \usepackage{longtable}
+   \usepackage{threeparttable}
+   \usepackage{array}
+
+2. Include the table using either:
+   \input{figures/soil_moisture_summary_table.tex}
+   OR
+   {<<include figures/soil_moisture_summary_table.tex>>}
+
+3. Reference the table in your text using:
+   Table~\ref{tab:soil_moisture_summary}
+
+Note: The table is labeled as 'tab:soil_moisture_summary'

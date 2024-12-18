@@ -12,9 +12,9 @@ cleaned_data <- CIMIS_2023 %>%
   ) %>%
   select(Date, ETo) %>%
   filter(!is.na(ETo)) %>%
-  filter(month(Date) >= 4 & month(Date) <= 10)
+  filter(month(Date) >= 4 & month(Date) <= 10)  # Filter growing season (Apr–Oct)
 
-# Step 2: Create the Plot with Rotated X-axis Labels
+# Step 2: Create the Plot with No Gridlines and Rotated X-axis Labels
 eto_plot <- ggplot(cleaned_data, aes(x = Date, y = ETo)) +
   geom_line(color = "darkblue", linewidth = 1) +          # Line plot
   geom_point(color = "blue", alpha = 0.6, size = 1.5) +   # Data points
@@ -33,12 +33,15 @@ eto_plot <- ggplot(cleaned_data, aes(x = Date, y = ETo)) +
     x = "Date",
     y = "ETo (inches)"
   ) +
-  theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 45, hjust = 1),    # Rotate x-axis labels
-    text = element_text(size = 16, family = "Arial"),     # Font adjustments
+    panel.background = element_blank(),          # Remove background
+    panel.grid = element_blank(),                # Remove all gridlines
+    axis.line = element_line(color = "black"),   # Add axis lines
+    axis.text.x = element_text(angle = 45, hjust = 1),  # Rotate x-axis labels
+    text = element_text(size = 16, family = "Arial"),   # Font adjustments
     axis.title = element_text(size = 16, face = "bold"),
-    plot.title = element_text(size = 18, face = "bold", hjust = 0.5)
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 14, hjust = 0.5)
   )
 
 # Step 3: Ensure 'figures' Folder Exists
@@ -47,5 +50,7 @@ if (!dir.exists("figures")) {
 }
 
 # Step 4: Save High-Quality Plot in 'figures' Folder
-ggsave("figures/daily_eto_2023.png", plot = eto_plot, width = 8, height = 6, dpi = 600, units = "in")
+ggsave("figures/daily_eto_2023_clean.png", plot = eto_plot, width = 8, height = 6, dpi = 600, units = "in")
 
+# Step 5: Display the Plot
+print(eto_plot)

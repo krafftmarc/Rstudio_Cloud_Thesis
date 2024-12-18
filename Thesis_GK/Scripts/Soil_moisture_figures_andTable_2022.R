@@ -1,5 +1,3 @@
-
-
 # Load required libraries
 library(tidyverse)
 library(lubridate)
@@ -8,7 +6,6 @@ library(scales)
 library(kableExtra)
 
 # Step 1: Load the Data
-# Replace 'your_file.csv' with your actual data file
 soil_data <- sm_output_cleaned_2022
 
 # Create figures directory if it doesn't exist
@@ -49,8 +46,8 @@ depth_profile_plot <- function(data) {
       text = element_text(size = 12, family = "Arial"),
       axis.text = element_text(size = 10),
       axis.text.x = element_text(angle = 45, hjust = 1),
-      panel.grid = element_blank(),
-      axis.line = element_line(color = "black"),
+      panel.grid = element_blank(), # Remove all gridlines
+      axis.line = element_line(color = "black"), # Add axis lines
       legend.position = "right"
     ) +
     labs(
@@ -71,7 +68,7 @@ treatment_comparison_plot <- function(data) {
     theme(
       text = element_text(size = 12, family = "Arial"),
       axis.text.x = element_text(angle = 45, hjust = 1),
-      panel.grid = element_blank(),
+      panel.grid = element_blank(), # Remove all gridlines
       axis.line = element_line(color = "black"),
       strip.text = element_text(size = 10)
     ) +
@@ -93,7 +90,7 @@ temporal_patterns_plot <- function(data) {
     theme(
       text = element_text(size = 12, family = "Arial"),
       axis.text.x = element_text(angle = 45, hjust = 1),
-      panel.grid = element_blank(),
+      panel.grid = element_blank(), # Remove all gridlines
       axis.line = element_line(color = "black"),
       legend.position = "bottom"
     ) +
@@ -165,10 +162,7 @@ summary_table <- summary_stats %>%
     general = "NS = Non-stressed, S = Stressed conditions.",
     threeparttable = TRUE,
     general_title = "Note:"
-  ) %>%
-  column_spec(1, width = "2.5cm") %>%
-  column_spec(2, width = "1.5cm") %>%
-  column_spec(3:6, width = "1.8cm")
+  )
 
 # Save the table
 writeLines(summary_table, "figures/soil_moisture_summary_table.tex")

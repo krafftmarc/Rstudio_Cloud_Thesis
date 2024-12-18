@@ -9,7 +9,6 @@ library(webshot2)
 # Step 1: Load the Data
 soil_data <- sm_output_cleaned_2023
 
-
 # Create figures directory if needed
 if (!dir.exists("figures")) {
   dir.create("figures")
@@ -47,8 +46,8 @@ treatment_comparison_plot <- function(data) {
     theme(
       text = element_text(size = 12, family = "Arial"),
       axis.text.x = element_text(angle = 45, hjust = 1),
-      panel.grid.minor = element_blank(),
-      panel.grid.major.x = element_blank(),
+      panel.grid = element_blank(), # Remove all gridlines
+      axis.line = element_line(color = "black"),
       strip.text = element_text(size = 10)
     ) +
     labs(
@@ -73,7 +72,8 @@ temporal_patterns_plot <- function(data) {
     theme(
       text = element_text(size = 12, family = "Arial"),
       axis.text.x = element_text(angle = 45, hjust = 1),
-      panel.grid.minor = element_blank(),
+      panel.grid = element_blank(), # Remove all gridlines
+      axis.line = element_line(color = "black"),
       legend.position = "bottom"
     ) +
     labs(
@@ -88,7 +88,7 @@ temporal_patterns_plot <- function(data) {
 # Depth Profile Plot
 depth_profile_plot <- function(data) {
   ggplot(data, aes(x = Date, y = Depth_num, fill = VWC)) +
-    geom_tile(interpolate = TRUE) +
+    geom_tile() +
     scale_fill_viridis(option = "magma", 
                        labels = scales::percent_format(accuracy = 0.1)) +
     scale_y_continuous(
@@ -100,7 +100,8 @@ depth_profile_plot <- function(data) {
     theme(
       text = element_text(size = 12, family = "Arial"),
       axis.text = element_text(size = 10),
-      panel.grid = element_blank(),
+      panel.grid = element_blank(), # Remove all gridlines
+      axis.line = element_line(color = "black"),
       legend.position = "right"
     ) +
     labs(

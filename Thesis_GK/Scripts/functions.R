@@ -215,14 +215,10 @@ debug_cimis_data <- function(data, year) {
 # Updated CIMIS processing function
 process_cimis <- function(cimis_2022, cimis_2023) {
   message("\nStarting CIMIS processing...")
-  
-  # Process 2022 data
-  message("\nProcessing 2022 data...")
   data_2022 <- cimis_2022 %>%
     dplyr::mutate(
       Date = as.Date(Date, format = "%m/%d/%Y"),
       Season = factor("2022"),
-      # Using avg_rel_hum instead of the column with special characters
       Temp_C = (as.numeric(`Avg Air Temp (F)`) - 32) * 5/9,
       RH = as.numeric(avg_rel_hum)
     ) %>%
@@ -234,8 +230,6 @@ process_cimis <- function(cimis_2022, cimis_2023) {
       VPD = calculate_vpd(Temp_C, RH)
     )
   
-  # Process 2023 data
-  message("\nProcessing 2023 data...")
   data_2023 <- cimis_2023 %>%
     dplyr::mutate(
       Date = as.Date(Date, format = "%m/%d/%Y"),
@@ -251,17 +245,17 @@ process_cimis <- function(cimis_2022, cimis_2023) {
       VPD = calculate_vpd(Temp_C, RH)
     )
   
-  # Combine and sort
-  message("\nCombining datasets...")
   combined_cimis <- dplyr::bind_rows(data_2022, data_2023) %>%
     dplyr::arrange(Date)
   
-  # Debug output
-  message("\nFirst few rows of final data:")
+  # Debug combined_cimis
+  message("\nFirst few rows of combined_cimis:")
   print(head(combined_cimis))
   
   return(combined_cimis)
 }
+
+
 
 # Keep calculate_vpd function unchanged
 calculate_vpd <- function(temp_C, RH) {
@@ -281,11 +275,13 @@ calculate_vpd <- function(temp_C, RH) {
 # Function for advanced statistical analysis
 # Location: functions.R
 # Find the existing perform_statistical_analysis function and replace it with:
+message("Columns in cimis_data:")
+print(colnames(cimis_data))
 
 perform_statistical_analysis <- function(combined_data, cimis_data) {
   # Merge water potential and environmental data
   analysis_data <- combined_data %>%
-    left_join(select(cimis_data, Date, Temp_C, VPD), by = "Date")
+    left_join(cimis_data %>% dplyr::select(Date, Temp_C, VPD), by = "Date")
   
   # Basic Analysis with VPD
   basic_stats <- analysis_data %>%
@@ -349,13 +345,12 @@ perform_statistical_analysis <- function(combined_data, cimis_data) {
 
 # Part 3: Visualization Functions ------------------------------------------------
 
-# Update the create_publication_plots function for better separation
 # Create publication plots with temperature and VPD
 create_comparison_plots <- function(combined_data, cimis_data) {
   plots <- list()
   
-  for(var in c("CH", "CS")) {
-    for(year in c("2022", "2023")) {
+  for (var in c("CH", "CS")) {
+    for (year in c("2022", "2023")) {
       # Subset water potential data
       subset_wp <- combined_data %>%
         filter(
@@ -369,29 +364,24 @@ create_comparison_plots <- function(combined_data, cimis_data) {
       subset_cimis <- cimis_data %>%
         filter(Date %in% subset_wp$Date)
       
-      if(nrow(subset_wp) > 0 && nrow(subset_cimis) > 0) {
+      if (nrow(subset_wp) > 0 && nrow(subset_cimis) > 0) {
         # Create plot
         p1 <- ggplot() +
-          # Water potential data
           geom_point(data = subset_wp, 
                      aes(x = Date, y = PSI, color = Time_of_Day, shape = Tx),
                      alpha = 0.7, size = 3) +
           geom_smooth(data = subset_wp,
                       aes(x = Date, y = PSI, color = Time_of_Day),
                       method = "lm", se = TRUE, alpha = 0.2) +
-          # Temperature line
           geom_line(data = subset_cimis,
-                    aes(x = Date, y = Temp_C/10, linetype = "Temperature"),
+                    aes(x = Date, y = Temp_C / 10, linetype = "Temperature"),
                     color = "red", linewidth = 1) +
-          # VPD line
           geom_line(data = subset_cimis,
-                    aes(x = Date, y = VPD/2, linetype = "VPD"),
+                    aes(x = Date, y = VPD / 2, linetype = "VPD"),
                     color = "blue", linewidth = 1) +
-          # Primary y-axis for Water Potential
           scale_y_continuous(
             name = "Water Potential (MPa)",
-            # Secondary y-axis for Temperature
-            sec.axis = sec_axis(~.*10, name = "Temperature (°C)")
+            sec.axis = sec_axis(~ . * 10, name = "Temperature (°C)")
           ) +
           scale_linetype_manual(
             name = "Environmental Variables",
@@ -416,7 +406,7 @@ create_comparison_plots <- function(combined_data, cimis_data) {
           ) +
           scale_x_date(date_breaks = "2 weeks", date_labels = "%b %d")
         
-        # Save plot
+        # Add plot to the list
         plot_key <- paste(var, year, "stem_comparison", sep = "_")
         plots[[plot_key]] <- p1
         message("Created comparison plot for: ", plot_key)
@@ -426,6 +416,28 @@ create_comparison_plots <- function(combined_data, cimis_data) {
   
   return(plots)
 }
+
+
+# Save plots to specified directory
+save_plots <- function(plots, output_dir = "figures") {
+  # Ensure the output directory exists
+  if (!dir.exists(output_dir)) {
+    dir.create(output_dir)
+  }
+  
+  # Loop through all plots in the list and save them
+  lapply(names(plots), function(plot_name) {
+    file_path <- file.path(output_dir, paste0(plot_name, ".png"))
+    ggsave(
+      filename = file_path,
+      plot = plots[[plot_name]],
+      width = 10,  # Adjust dimensions as needed
+      height = 8
+    )
+    message("Saved plot: ", file_path)
+  })
+}
+
 
 
 

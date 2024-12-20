@@ -1,12 +1,13 @@
-# File > New File > R Script
-# Add these lines:
-source("functions.R")
-source("run_analysis.R")
+closeAllConnections()
+
+source("/cloud/project/Thesis_GK/Scripts/functions.R")
+source("/cloud/project/Thesis_GK/Scripts/run_analysis.R")
 results <- run_complete_analysis()
-# Save as "analysis_script.R"
-getwd()
-source("functions.R")
-source("run_analysis.R")
-
 warnings()
+lifecycle::last_lifecycle_warnings()
+rm(list = ls())
+conflicts <- intersect(ls(), ls(baseenv()))
+print(conflicts)
 
+# Check the contents of run_analysis.R
+readLines("/cloud/project/Thesis_GK/Scripts/run_analysis.R")

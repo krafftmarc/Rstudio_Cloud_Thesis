@@ -1,0 +1,133 @@
+Statistical Analysis Results
+
+=============================
+
+
+PRE-DAWN RESULTS
+----------------
+Linear mixed model fit by REML ['lmerMod']
+Formula: 
+PSI ~ Variety + Tx + Stress + scaled_temp + (1 | Block_ID)
+   Data: subset_data
+
+REML criterion at convergence: 2972.4
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.2781 -0.6214  0.0504  0.6318  3.0977 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Block_ID (Intercept) 0.2215   0.4707  
+ Residual             2.1573   1.4688  
+Number of obs: 820, groups:  Block_ID, 2
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept) -6.79672    0.41093 -16.540
+VarietyCS   -0.01544    0.10442  -0.148
+Tx2L         2.10494    0.23691   8.885
+Tx4          0.47859    0.27328   1.751
+Tx4L         2.68121    0.29783   9.002
+StressNS     0.69515    0.18091   3.843
+StressS      0.80194    0.19206   4.175
+scaled_temp  0.14914    0.05039   2.960
+
+Correlation of Fixed Effects:
+            (Intr) VrtyCS Tx2L   Tx4    Tx4L   StrsNS StrssS
+VarietyCS   -0.197                                          
+Tx2L        -0.545  0.122                                   
+Tx4         -0.434  0.038  0.745                            
+Tx4L        -0.422  0.139  0.773  0.594                     
+StressNS    -0.038 -0.052 -0.074 -0.002 -0.375              
+StressS     -0.016 -0.030 -0.100 -0.002 -0.455  0.500       
+scaled_temp -0.035 -0.008 -0.019 -0.002 -0.027  0.286  0.257
+
+Type III ANOVA:
+Analysis of Deviance Table (Type III Wald chisquare tests)
+
+Response: PSI
+               Chisq Df Pr(>Chisq)    
+(Intercept) 273.5641  1  < 2.2e-16 ***
+Variety       0.0219  1    0.88243    
+Tx          145.8694  3  < 2.2e-16 ***
+Stress       21.5451  2  2.097e-05 ***
+scaled_temp   8.7596  1    0.00308 ** 
+---
+Signif. codes:  
+0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+MIDDAY RESULTS
+--------------
+Linear mixed model fit by REML ['lmerMod']
+Formula: 
+PSI ~ Variety + Tx + Stress + scaled_temp + (1 | Block_ID)
+   Data: subset_data
+
+REML criterion at convergence: 12322.2
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.6732 -0.6462 -0.0637  0.5764  3.0233 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Block_ID (Intercept)  0.4282  0.6544  
+ Residual             11.3370  3.3671  
+Number of obs: 2338, groups:  Block_ID, 2
+
+Fixed effects:
+             Estimate Std. Error t value
+(Intercept) -12.60573    0.50818 -24.806
+VarietyCS    -0.12651    0.14405  -0.878
+Tx2L          0.80317    0.21128   3.801
+Tx4          -0.01992    0.26628  -0.075
+Tx4L          1.40814    0.35511   3.965
+StressNS      0.03986    0.25815   0.154
+StressS       0.18852    0.27335   0.690
+scaled_temp  -0.62864    0.07941  -7.917
+
+Correlation of Fixed Effects:
+            (Intr) VrtyCS Tx2L   Tx4    Tx4L   StrsNS StrssS
+VarietyCS   -0.204                                          
+Tx2L        -0.340  0.152                                   
+Tx4         -0.241  0.006  0.572                            
+Tx4L        -0.218  0.125  0.617  0.362                     
+StressNS     0.007 -0.058 -0.190 -0.021 -0.494              
+StressS     -0.006 -0.042 -0.159  0.006 -0.544  0.451       
+scaled_temp -0.067 -0.054  0.174  0.019  0.106  0.182  0.166
+
+Type III ANOVA:
+Analysis of Deviance Table (Type III Wald chisquare tests)
+
+Response: PSI
+               Chisq Df Pr(>Chisq)    
+(Intercept) 615.3209  1  < 2.2e-16 ***
+Variety       0.7714  1     0.3798    
+Tx           26.3595  3  8.020e-06 ***
+Stress        0.5065  2     0.7763    
+scaled_temp  62.6711  1  2.443e-15 ***
+---
+Signif. codes:  
+0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Model Coefficients
+----------------
+               Estimate Std. Error    t value
+(Intercept) -6.79671604 0.41093160 -16.539775
+VarietyCS   -0.01544277 0.10442350  -0.147886
+Tx2L         2.10494364 0.23691048   8.884975
+Tx4          0.47859057 0.27327911   1.751289
+Tx4L         2.68120633 0.29783257   9.002395
+StressNS     0.69514530 0.18090738   3.842548
+StressS      0.80194239 0.19206257   4.175423
+scaled_temp  0.14914346 0.05039193   2.959669
+                Estimate Std. Error      t value
+(Intercept) -12.60573497 0.50817974 -24.80566214
+VarietyCS    -0.12651490 0.14404955  -0.87827349
+Tx2L          0.80316585 0.21127683   3.80148565
+Tx4          -0.01992440 0.26627657  -0.07482597
+Tx4L          1.40813934 0.35511098   3.96535001
+StressNS      0.03985793 0.25814823   0.15439941
+StressS       0.18851857 0.27334573   0.68967081
+scaled_temp  -0.62863640 0.07940828  -7.91650950

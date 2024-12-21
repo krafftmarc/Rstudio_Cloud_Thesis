@@ -1,0 +1,162 @@
+COMPREHENSIVE STATISTICAL ANALYSIS RESULTS
+========================================
+
+1. SUMMARY STATISTICS
+-----------------
+
+# A tibble: 22 × 9
+   Season Variety Tx       Time_of_Day     n mean_psi sd_psi mean_vpd sd_vpd
+   <fct>  <fct>   <fct>    <fct>       <int>    <dbl>  <dbl>    <dbl>  <dbl>
+ 1 2022   CH      Baseline Pre-dawn      216    -4.77   1.49     1.93   0.66
+ 2 2022   CH      Baseline Midday        534   -11.9    3.48     1.73   0.61
+ 3 2022   CH      2L       Pre-dawn       10    -7.15   0.91     1.68   0.35
+ 4 2022   CH      2L       Midday         98   -11.4    4.37     1.68   0.33
+ 5 2022   CH      4L       Pre-dawn       26    -6.38   1.75     1.68   0.33
+ 6 2022   CH      4L       Midday         83   -12.8    4.24     1.68   0.33
+ 7 2022   CS      Baseline Pre-dawn      216    -4.63   1.43     1.93   0.66
+ 8 2022   CS      Baseline Midday        528   -11.8    3.24     1.73   0.61
+ 9 2022   CS      2L       Pre-dawn       35    -7.1    1.63     1.42   0.46
+10 2022   CS      2L       Midday        271   -13.3    4.51     1.78   0.42
+11 2022   CS      4L       Pre-dawn       55    -6.75   1.87     1.42   0.46
+12 2022   CS      4L       Midday        214   -13.2    3.91     1.79   0.43
+13 2023   CH      Baseline Pre-dawn        4    -6.5    1        1.49   0   
+14 2023   CH      2L       Pre-dawn       54    -3.61   1.58     1.14   0.35
+15 2023   CH      2L       Midday        128   -11.3    2.64     1.16   0.33
+16 2023   CH      4L       Pre-dawn       75    -3.61   1.49     1.14   0.35
+17 2023   CH      4L       Midday        160   -11.0    2.46     1.16   0.33
+18 2023   CS      Baseline Pre-dawn        4    -5.88   1.25     1.49   0   
+19 2023   CS      2L       Pre-dawn       72    -4.12   1.41     1.21   0.37
+20 2023   CS      2L       Midday        172   -11.2    2.23     1.21   0.34
+21 2023   CS      4L       Pre-dawn       61    -3.52   1.4      1.19   0.37
+22 2023   CS      4L       Midday        150   -10.9    2.03     1.21   0.34
+
+
+2. CORRELATIONS
+-------------
+
+# A tibble: 8 × 6
+  Season Variety Time_of_Day     n temp_cor vpd_cor
+  <fct>  <fct>   <fct>       <int>    <dbl>   <dbl>
+1 2022   CH      Pre-dawn      252    0.228   0.241
+2 2022   CH      Midday        715   -0.096  -0.09 
+3 2022   CS      Pre-dawn      306    0.452   0.41 
+4 2022   CS      Midday       1013   -0.175  -0.161
+5 2023   CH      Pre-dawn      133   -0.171  -0.11 
+6 2023   CH      Midday        288   -0.395  -0.357
+7 2023   CS      Pre-dawn      137   -0.14   -0.092
+8 2023   CS      Midday        322   -0.349  -0.315
+
+
+3. MIXED EFFECTS MODEL RESULTS
+--------------------------
+
+
+Pre-dawn Analysis:
+================== 
+Model Summary:
+Linear mixed model fit by REML ['lmerMod']
+Formula: PSI ~ Tx + Variety + VPD + (1 | Block_ID)
+   Data: subset_data
+Control: lmerControl(check.nobs.vs.nlev = "ignore", check.nobs.vs.rankZ = "ignore",      check.nobs.vs.nRE = "ignore")
+
+REML criterion at convergence: 3155.8
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.9133 -0.6629  0.0351  0.6767  2.6047 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Block_ID (Intercept) 0.686    0.8282  
+ Residual             2.837    1.6844  
+Number of obs: 810, groups:  Block_ID, 2
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept) -4.80068    0.62868  -7.636
+Tx2L         0.04113    0.17190   0.239
+Tx4L         0.47069    0.15942   2.953
+VarietyCS   -0.16551    0.11902  -1.391
+VPD          0.12508    0.10678   1.171
+
+Correlation of Fixed Effects:
+          (Intr) Tx2L   Tx4L   VrtyCS
+Tx2L      -0.193                     
+Tx4L      -0.199  0.399              
+VarietyCS -0.090 -0.084 -0.007       
+VPD       -0.327  0.426  0.420 -0.012
+
+Model R² Values:
+--------------
+Marginal R² (fixed effects): 0.012
+Conditional R² (total): 0.204
+
+Type III Analysis of Deviance (Wald chi-square tests):
+------------------------------------------------
+Analysis of Deviance Table (Type III Wald chisquare tests)
+
+Response: PSI
+              Chisq Df Pr(>Chisq)    
+(Intercept) 58.3113  1  2.238e-14 ***
+Tx           9.7685  2   0.007565 ** 
+Variety      1.9337  1   0.164353    
+VPD          1.3723  1   0.241423    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+-------------------
+
+Midday Analysis:
+================== 
+Model Summary:
+Linear mixed model fit by REML ['lmerMod']
+Formula: PSI ~ Tx + Variety + VPD + (1 | Block_ID)
+   Data: subset_data
+Control: lmerControl(check.nobs.vs.nlev = "ignore", check.nobs.vs.rankZ = "ignore",      check.nobs.vs.nRE = "ignore")
+
+REML criterion at convergence: 12053.7
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.7328 -0.6569 -0.0529  0.6366  2.9890 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Block_ID (Intercept)  0.2842  0.5331  
+ Residual             11.4203  3.3794  
+Number of obs: 2284, groups:  Block_ID, 2
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)  -9.4322     0.4549 -20.736
+Tx2L         -0.6144     0.1756  -3.499
+Tx4L         -0.3091     0.1803  -1.714
+VarietyCS    -0.2239     0.1442  -1.553
+VPD          -1.3430     0.1316 -10.208
+
+Correlation of Fixed Effects:
+          (Intr) Tx2L   Tx4L   VrtyCS
+Tx2L      -0.207                     
+Tx4L      -0.223  0.369              
+VarietyCS -0.114 -0.135 -0.090       
+VPD       -0.486  0.191  0.209 -0.087
+
+Model R² Values:
+--------------
+Marginal R² (fixed effects): 0.047
+Conditional R² (total): 0.070
+
+Type III Analysis of Deviance (Wald chi-square tests):
+------------------------------------------------
+Analysis of Deviance Table (Type III Wald chisquare tests)
+
+Response: PSI
+               Chisq Df Pr(>Chisq)    
+(Intercept) 429.9639  1  < 2.2e-16 ***
+Tx           12.4530  2   0.001976 ** 
+Variety       2.4117  1   0.120432    
+VPD         104.2125  1  < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+-------------------

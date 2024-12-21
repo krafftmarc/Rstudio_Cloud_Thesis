@@ -14,6 +14,22 @@ library(gtable)
 library(webshot2)
 library(gt)
 
+# Add after library imports in functions.R
+calculate_r2 <- function(model) {
+  r2 <- MuMIn::r.squaredGLMM(model)
+  result <- r2[1, ]  # Get first row as this contains the R2m and R2c values
+  return(list(
+    marginal = result["R2m"],
+    conditional = result["R2c"]
+  ))
+}
+
+calculate_pvalues <- function(model) {
+  # Use car::Anova to get chi-square test results
+  anova_result <- car::Anova(model, type = 3, test.statistic = "Chisq")
+  return(anova_result)
+}
+
 # Part 2: Data Loading Functions
 
 # Function to load 2022 Water Potential data
@@ -277,7 +293,14 @@ calculate_vpd <- function(temp_C, RH) {
     return(NA)
   }
   
-  
+  # Add this after calculate_vpd() function
+  calculate_model_r2 <- function(model) {
+    r2 <- r.squaredGLMM(model)
+    list(
+      marginal = r2[1,"R2m"],
+      conditional = r2[1,"R2c"]
+    )
+  }
   
   # Calculate saturation vapor pressure (es) using Tetens equation
   es <- 0.611 * exp((17.27 * temp_C) / (temp_C + 237.3))
@@ -427,12 +450,27 @@ perform_statistical_analysis <- function(combined_data, cimis_data) {
   cat("--------------------------\n\n")
   for(time in c("Pre-dawn", "Midday")) {
     cat(sprintf("\n%s Analysis:\n", time))
-    cat(paste(rep("=", nchar(time) + 10), collapse=""), "\n\n")
+    cat("================== \n")
+    
+    # Model Summary
+    cat("Model Summary:\n")
     print(summary(models[[time]]))
-    cat("\nANOVA Results:\n")
+    cat("\n")
+    
+    # R² values
+    r2_stats <- calculate_r2(models[[time]])
+    cat("Model R² Values:\n")
     cat("--------------\n")
-    print(anova(models[[time]]))
-    cat("\n\n")
+    cat(sprintf("Marginal R² (fixed effects): %.3f\n", r2_stats$marginal))
+    cat(sprintf("Conditional R² (total): %.3f\n", r2_stats$conditional))
+    cat("\n")
+    
+    # Type III tests with p-values
+    cat("Type III Analysis of Deviance (Wald chi-square tests):\n")
+    cat("------------------------------------------------\n")
+    anova_table <- calculate_pvalues(models[[time]])
+    print(anova_table)
+    cat("\n-------------------\n")
   }
   
   sink()

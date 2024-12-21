@@ -1,121 +1,151 @@
-# Add this at the start of functions.R
-message("Sourcing functions.R...")
-# Part 1: Libraries and Data Loading Functions ----------------------------------------
-
-# Load required libraries
+# Part 1: Load required libraries
 library(tidyverse)
 library(lubridate)
 library(lme4)
 library(emmeans)
-library(corrplot)
 library(gt)
 library(ggpubr)
-library(car)  # For type III ANOVA
-library(multcomp)  # For multiple comparisons
-library(performance)  # For model diagnostics
-library(MuMIn)  # For R-squared calculations
-library(grid)  # For table export
-library(gtable)  # For table export
-# Additional libraries needed
-library(webshot2)  # for PNG export
-library(gt)        # for table formatting
+library(car)
+library(multcomp)
+library(performance)
+library(MuMIn)
+library(grid)
+library(gtable)
+library(webshot2)
+library(gt)
 
-# Create output directories function
-create_output_dirs <- function() {
-  # Create figures directory if it doesn't exist
-  if (!dir.exists("figures")) {
-    dir.create("figures")
-  }
-  
-  # Create tables directory if it doesn't exist
-  if (!dir.exists("tables")) {
-    dir.create("tables")
-  }
-}
+# Part 2: Data Loading Functions
 
-# Load and validate Water Potential 2022 data
+# Function to load 2022 Water Potential data
 load_wp_2022 <- function() {
-  wp_2022 <- Tyree_2022_Cleaned %>%
-    dplyr::mutate(
-      Date = as.Date(paste(Year, Month, Day, sep = "-")),
-      Season = "2022",
-      Variety = factor(Variety, levels = c("CH", "CS")),
-      Time_of_Day = case_when(
-        Time_id == "1PM" ~ "Midday",
-        Time_id == "5AM" ~ "Pre-dawn",
-        TRUE ~ Time_id
-      ),
-      Time_of_Day = factor(Time_of_Day, levels = c("Pre-dawn", "Midday")),
-      Block_ID = as.factor(Block_ID),
-      Vine_ID = as.factor(Vine_ID),
-      # Handle Tx values
-      Tx = case_when(
-        is.nan(as.numeric(as.character(Tx))) ~ "Baseline",
-        is.na(Tx) ~ "Baseline",
-        TRUE ~ as.character(Tx)
-      ),
-      Stress = NA_character_
-    ) %>%
-    dplyr::filter(!is.na(PSI), !is.na(Variety))
-  
-  return(wp_2022)
+  tryCatch({
+    wp_2022 <- Tyree_2022_Cleaned %>%
+      dplyr::mutate(
+        Date = as.Date(paste(Year, Month, Day, sep = "-")),
+        Season = "2022",
+        Variety = factor(Variety, levels = c("CH", "CS")),
+        Time_of_Day = case_when(
+          Time_id == "1PM" ~ "Midday",
+          Time_id == "5AM" ~ "Pre-dawn",
+          TRUE ~ Time_id
+        ),
+        Time_of_Day = factor(Time_of_Day, levels = c("Pre-dawn", "Midday")),
+        Block_ID = as.factor(Block_ID),
+        Vine_ID = as.factor(Vine_ID),
+        Tx = case_when(
+          is.nan(as.numeric(as.character(Tx))) ~ "Baseline",
+          is.na(Tx) ~ "Baseline",
+          TRUE ~ as.character(Tx)
+        ),
+        Stress = NA_character_
+      ) %>%
+      dplyr::filter(!is.na(PSI), !is.na(Variety))
+    
+    message("Successfully loaded 2022 Water Potential data")
+    return(wp_2022)
+  }, error = function(e) {
+    message("Error loading 2022 Water Potential data: ", e$message)
+    return(NULL)
+  })
 }
 
-# Load and validate Water Potential 2023 data
+# Function to load 2023 Water Potential data
 load_wp_2023 <- function() {
-  wp_2023 <- Clean_Tyree_Water_Potentials_2023 %>%
-    dplyr::mutate(
-      Date = date,
-      Season = "2023",
-      Variety = factor(variety, levels = c("CH", "CS")),
-      Time_of_Day = case_when(
-        time_block == 500 ~ "Pre-dawn",
-        time_block == 1300 ~ "Midday",
-        TRUE ~ as.character(time_block)
-      ),
-      Time_of_Day = factor(Time_of_Day, levels = c("Pre-dawn", "Midday")),
-      Block_ID = as.factor(block),
-      Vine_ID = as.factor(vine_id),
-      PSI = `Ψ`,
-      Tx = ifelse(is.na(Tx), "Baseline", as.character(Tx)),
-      pot_type = "Leaf"
-    ) %>%
-    dplyr::filter(!is.na(PSI), !is.na(Variety))
-  
-  # Create a new dataframe with only the columns we want
-  wp_2023_selected <- wp_2023 %>%
-    dplyr::transmute(
-      Date = Date,
-      Season = Season,
-      Variety = Variety,
-      Time_of_Day = Time_of_Day,
-      Block_ID = Block_ID,
-      Vine_ID = Vine_ID,
-      Tx = Tx,
-      PSI = PSI,
-      pot_type = pot_type,
-      Stress = Stress
-    )
-  
-  return(wp_2023_selected)
+  tryCatch({
+    wp_2023 <- Clean_Tyree_Water_Potentials_2023 %>%
+      dplyr::mutate(
+        Date = date,
+        Season = "2023",
+        Variety = factor(variety, levels = c("CH", "CS")),
+        Time_of_Day = case_when(
+          time_block == 500 ~ "Pre-dawn",
+          time_block == 1300 ~ "Midday",
+          TRUE ~ as.character(time_block)
+        ),
+        Time_of_Day = factor(Time_of_Day, levels = c("Pre-dawn", "Midday")),
+        Block_ID = as.factor(block),
+        Vine_ID = as.factor(vine_id),
+        PSI = `Ψ`,
+        Tx = ifelse(is.na(Tx), "Baseline", as.character(Tx)),
+        pot_type = tolower(pot_type)
+      ) %>%
+      dplyr::filter(!is.na(PSI), !is.na(Variety))
+    
+    # Select only needed columns
+    wp_2023_selected <- wp_2023 %>%
+      dplyr::transmute(
+        Date = Date,
+        Season = Season,
+        Variety = Variety,
+        Time_of_Day = Time_of_Day,
+        Block_ID = Block_ID,
+        Vine_ID = Vine_ID,
+        Tx = Tx,
+        PSI = PSI,
+        pot_type = pot_type,
+        Stress = Stress
+      )
+    
+    message("Successfully loaded 2023 Water Potential data")
+    return(wp_2023_selected)
+  }, error = function(e) {
+    message("Error loading 2023 Water Potential data: ", e$message)
+    return(NULL)
+  })
 }
 
 # Process water potential data with comprehensive treatment standardization
 process_water_potential <- function(data_2022, data_2023) {
+  message("Starting water potential data processing...")
+  
+  # Validate inputs
+  if(is.null(data_2022) || is.null(data_2023)) {
+    stop("Both 2022 and 2023 data must be provided")
+  }
+  
   # Define common columns
   common_cols <- c("Date", "Season", "Variety", "Time_of_Day", 
                    "Block_ID", "Vine_ID", "Tx", "PSI", 
                    "pot_type", "Stress")
   
+  # Verify all required columns exist in both datasets
+  missing_cols_2022 <- common_cols[!common_cols %in% names(data_2022)]
+  missing_cols_2023 <- common_cols[!common_cols %in% names(data_2023)]
+  
+  if(length(missing_cols_2022) > 0 || length(missing_cols_2023) > 0) {
+    stop(sprintf("Missing columns: 2022: %s, 2023: %s", 
+                 paste(missing_cols_2022, collapse=", "), 
+                 paste(missing_cols_2023, collapse=", ")))
+  }
+  
   # Process 2022 data
+  message("Processing 2022 data...")
   data_2022_processed <- data_2022 %>%
-    dplyr::select(all_of(common_cols))
+    dplyr::select(all_of(common_cols)) %>%
+    # Standardize pot_type to lowercase if it exists
+    mutate(
+      pot_type = if("pot_type" %in% names(.)) tolower(pot_type) else "leaf",
+      # Ensure Treatment is properly formatted
+      Treatment = case_when(
+        is.na(Stress) ~ as.character(Tx),
+        TRUE ~ paste(Tx, Stress, sep="_")
+      )
+    )
   
   # Process 2023 data
+  message("Processing 2023 data...")
   data_2023_processed <- data_2023 %>%
-    dplyr::select(all_of(common_cols))
+    dplyr::select(all_of(common_cols)) %>%
+    mutate(
+      pot_type = if("pot_type" %in% names(.)) tolower(pot_type) else "leaf",
+      Treatment = case_when(
+        is.na(Stress) ~ as.character(Tx),
+        TRUE ~ paste(Tx, Stress, sep="_")
+      )
+    )
   
   # Combine datasets and standardize treatment labels
+  message("Combining datasets...")
   combined_data <- bind_rows(data_2022_processed, data_2023_processed) %>%
     dplyr::mutate(
       Season = factor(Season),
@@ -128,137 +158,127 @@ process_water_potential <- function(data_2022, data_2023) {
       ),
       # Ensure Tx is a factor with consistent levels
       Tx = factor(Tx, levels = c("Baseline", "2L", "4L")),
-      # Create Treatment combining Tx and Stress
-      Treatment = case_when(
-        is.na(Stress) ~ as.character(Tx),
-        TRUE ~ paste(Tx, Stress, sep = "_")
-      )
+      # Ensure pot_type is factor with consistent levels
+      pot_type = factor(pot_type, levels = c("leaf", "stem"))
     )
   
-  # Optional: Check for unexpected Tx values and raise a warning
-  unexpected_tx <- unique(combined_data$Tx[is.na(combined_data$Tx)])
-  if (length(unexpected_tx) > 0) {
-    warning("Unexpected Tx values detected: ", paste(unexpected_tx, collapse = ", "))
-  }
+  # Add diagnostic output
+  message("\nData processing summary:")
+  message("Total rows in combined dataset: ", nrow(combined_data))
+  message("Unique values in Tx: ", paste(unique(combined_data$Tx), collapse=", "))
+  message("Unique values in pot_type: ", paste(unique(combined_data$pot_type), collapse=", "))
+  
+  message("\nPot type distribution by year and variety:")
+  print(table(combined_data$Season, combined_data$pot_type, combined_data$Variety))
   
   return(combined_data)
 }
 
+# Create helper function to validate column presence
+validate_columns <- function(data, required_cols, dataset_name) {
+  missing_cols <- required_cols[!required_cols %in% names(data)]
+  if(length(missing_cols) > 0) {
+    stop(sprintf("Missing required columns in %s: %s", 
+                 dataset_name, 
+                 paste(missing_cols, collapse=", ")))
+  }
+}
 
-# Updated CIMIS loading functions with careful column handling
+# Function to load 2022 CIMIS data
 load_cimis_2022 <- function() {
-  # First verify the raw data structure
-  message("Initial 2022 CIMIS columns:")
-  print(colnames(CIMIS_growing_season_2022))
-  
-  data_2022 <- CIMIS_growing_season_2022 %>%
-    # First ensure we have the humidity column
-    rename_with(
-      ~ "avg_rel_hum", 
-      matches("Avg Rel Hum \\(%\\)")  # Explicit regex for the column name
-    ) %>%
-    mutate(
-      Date = as.Date(Date, format = "%m/%d/%Y"),
-      Season = "2022",
-      # Convert columns to numeric explicitly
-      temp = as.numeric(`Avg Air Temp (F)`),
-      rh = as.numeric(avg_rel_hum)
-    ) %>%
-    filter(!is.na(temp), !is.na(rh))
-  
-  # Debug output
-  message("\nProcessed 2022 CIMIS data structure:")
-  print(str(data_2022))
-  
-  return(data_2022)
+  tryCatch({
+    message("Loading 2022 CIMIS data...")
+    data_2022 <- CIMIS_growing_season_2022 %>%
+      dplyr::select(
+        Date,
+        temp = `Avg Air Temp (F)`,
+        rh = `Avg Rel Hum (%)`
+      ) %>%
+      dplyr::mutate(
+        Date = as.Date(Date, format = "%m/%d/%Y"),
+        Season = "2022",
+        temp = as.numeric(temp),
+        rh = as.numeric(rh)
+      ) %>%
+      dplyr::filter(!is.na(temp), !is.na(rh), rh > 0)
+    
+    message("Successfully loaded 2022 CIMIS data")
+    return(data_2022)
+  }, error = function(e) {
+    message("Error loading 2022 CIMIS data: ", e$message)
+    return(NULL)
+  })
 }
 
+# Function to load 2023 CIMIS data
 load_cimis_2023 <- function() {
-  # First verify the raw data structure
-  message("Initial 2023 CIMIS columns:")
-  print(colnames(CIMIS_2023))
-  
-  data_2023 <- CIMIS_2023 %>%
-    # First ensure we have the humidity column
-    rename_with(
-      ~ "avg_rel_hum", 
-      matches("Avg Rel Hum \\(%\\)")  # Explicit regex for the column name
-    ) %>%
-    mutate(
-      Date = as.Date(Date, format = "%m/%d/%Y"),
-      Season = "2023",
-      # Convert columns to numeric explicitly
-      temp = as.numeric(`Avg Air Temp (F)`),
-      rh = as.numeric(avg_rel_hum)
-    ) %>%
-    filter(!is.na(temp), !is.na(rh))
-  
-  # Debug output
-  message("\nProcessed 2023 CIMIS data structure:")
-  print(str(data_2023))
-  
-  return(data_2023)
+  tryCatch({
+    message("Loading 2023 CIMIS data...")
+    data_2023 <- CIMIS_2023 %>%
+      dplyr::select(
+        Date,
+        temp = `Avg Air Temp (F)`,
+        rh = `Avg Rel Hum (%)`
+      ) %>%
+      dplyr::mutate(
+        Date = as.Date(Date, format = "%m/%d/%Y"),
+        Season = "2023",
+        temp = as.numeric(temp),
+        rh = as.numeric(rh)
+      ) %>%
+      dplyr::filter(!is.na(temp), !is.na(rh), rh > 0)
+    
+    message("Successfully loaded 2023 CIMIS data")
+    return(data_2023)
+  }, error = function(e) {
+    message("Error loading 2023 CIMIS data: ", e$message)
+    return(NULL)
+  })
 }
 
-# Debug function for CIMIS data
-debug_cimis_data <- function(data, year) {
-  message("\nDebugging CIMIS ", year, " data:")
-  message("Column names:")
-  print(names(data))
-  message("\nFirst few rows of humidity columns:")
-  print("Raw avg_rel_hum:")
-  print(head(data$avg_rel_hum))
-  print("\nRaw Avg Rel Hum (%):")
-  print(head(data[,"Avg Rel Hum (%)"]))
-}
-
-# Updated CIMIS processing function
+# Function to process CIMIS data
 process_cimis <- function(cimis_2022, cimis_2023) {
   message("\nStarting CIMIS processing...")
-  data_2022 <- cimis_2022 %>%
-    dplyr::mutate(
-      Date = as.Date(Date, format = "%m/%d/%Y"),
-      Season = factor("2022"),
-      Temp_C = (as.numeric(`Avg Air Temp (F)`) - 32) * 5/9,
-      RH = as.numeric(avg_rel_hum)
-    ) %>%
-    dplyr::transmute(
-      Date = Date,
-      Season = Season,
-      Temp_C = Temp_C,
-      RH = RH,
-      VPD = calculate_vpd(Temp_C, RH)
-    )
   
-  data_2023 <- cimis_2023 %>%
-    dplyr::mutate(
-      Date = as.Date(Date, format = "%m/%d/%Y"),
-      Season = factor("2023"),
-      Temp_C = (as.numeric(`Avg Air Temp (F)`) - 32) * 5/9,
-      RH = as.numeric(avg_rel_hum)
-    ) %>%
-    dplyr::transmute(
-      Date = Date,
-      Season = Season,
-      Temp_C = Temp_C,
-      RH = RH,
-      VPD = calculate_vpd(Temp_C, RH)
-    )
+  process_year_data <- function(data) {
+    if(is.null(data)) return(NULL)
+    
+    data %>%
+      dplyr::mutate(
+        Temp_C = (temp - 32) * 5/9,  # Convert F to C
+        RH = rh,
+        VPD = calculate_vpd(Temp_C, RH)
+      ) %>%
+      dplyr::select(
+        Date,
+        Season,
+        Temp_C,
+        RH,
+        VPD
+      )
+  }
   
+  # Process each year
+  data_2022 <- process_year_data(cimis_2022)
+  data_2023 <- process_year_data(cimis_2023)
+  
+  # Combine and arrange
   combined_cimis <- dplyr::bind_rows(data_2022, data_2023) %>%
     dplyr::arrange(Date)
   
-  # Debug combined_cimis
-  message("\nFirst few rows of combined_cimis:")
-  print(head(combined_cimis))
-  
+  message("CIMIS processing complete")
   return(combined_cimis)
 }
 
-
-
-# Keep calculate_vpd function unchanged
+# VPD calculation function
 calculate_vpd <- function(temp_C, RH) {
+  if(any(is.na(temp_C)) || any(is.na(RH))) {
+    warning("Missing values in temperature or RH data")
+    return(NA)
+  }
+  
+  
+  
   # Calculate saturation vapor pressure (es) using Tetens equation
   es <- 0.611 * exp((17.27 * temp_C) / (temp_C + 237.3))
   # Calculate actual vapor pressure (ea)
@@ -268,247 +288,383 @@ calculate_vpd <- function(temp_C, RH) {
   return(vpd)
 }
 
+# Add this after calculate_vpd() function and before Part 3: Visualization Functions
 
-
-
-
-# Function for advanced statistical analysis
-# Location: functions.R
-# Find the existing perform_statistical_analysis function and replace it with:
-message("Columns in cimis_data:")
-print(colnames(cimis_data))
-
+# Statistical analysis function
 perform_statistical_analysis <- function(combined_data, cimis_data) {
+  # Create output directories if they don't exist
+  if (!dir.exists("tables")) dir.create("tables")
+  
   # Merge water potential and environmental data
   analysis_data <- combined_data %>%
     left_join(cimis_data %>% dplyr::select(Date, Temp_C, VPD), by = "Date")
   
-  # Basic Analysis with VPD
-  basic_stats <- analysis_data %>%
-    group_by(Season, Variety, Tx, Time_of_Day) %>%
-    summarise(
-      n = n(),
-      mean_psi = mean(PSI, na.rm = TRUE),
-      sd_psi = sd(PSI, na.rm = TRUE),
-      mean_vpd = mean(VPD, na.rm = TRUE),
-      sd_vpd = sd(VPD, na.rm = TRUE),
-      .groups = 'drop'
+  # Basic Analysis with VPD - filter out NA Time_of_Day
+  basic_stats <- suppressWarnings({
+    analysis_data %>%
+      filter(!is.na(Time_of_Day)) %>%
+      group_by(Season, Variety, Tx, Time_of_Day) %>%
+      summarise(
+        n = n(),
+        mean_psi = round(mean(PSI, na.rm = TRUE), 2),
+        sd_psi = round(sd(PSI, na.rm = TRUE), 2),
+        mean_vpd = round(mean(VPD, na.rm = TRUE), 2),
+        sd_vpd = round(sd(VPD, na.rm = TRUE), 2),
+        .groups = 'drop'
+      )
+  })
+  
+  # Create formatted GT table for basic stats
+  basic_stats_table <- basic_stats %>%
+    gt() %>%
+    tab_header(
+      title = md("**Water Potential and VPD Summary Statistics**"),
+      subtitle = "By Season, Variety, Treatment, and Time of Day"
+    ) %>%
+    fmt_number(
+      columns = c(mean_psi, sd_psi, mean_vpd, sd_vpd),
+      decimals = 2
+    ) %>%
+    cols_label(
+      Season = "Season",
+      Variety = "Variety",
+      Tx = "Treatment",
+      Time_of_Day = "Time of Day",
+      n = "N",
+      mean_psi = md("Mean Ψ (MPa)"),
+      sd_psi = "SD Ψ",
+      mean_vpd = "Mean VPD (kPa)",
+      sd_vpd = "SD VPD"
+    ) %>%
+    tab_style(
+      style = cell_borders(
+        sides = "bottom",
+        color = "black",
+        weight = px(2)
+      ),
+      locations = cells_column_labels()
+    ) %>%
+    tab_options(
+      heading.background.color = "ghostwhite",
+      column_labels.background.color = "ghostwhite",
+      table.border.top.width = px(2),
+      table.border.bottom.width = px(2)
     )
+  
+  # Save tables without expand parameter
+  gtsave(basic_stats_table, 
+         filename = "tables/basic_stats_summary.html")
+  
+  gtsave(basic_stats_table, 
+         filename = "tables/basic_stats_summary.png")
   
   # Correlation analysis
-  correlations <- analysis_data %>%
-    group_by(Season, Variety, Time_of_Day) %>%
-    summarise(
-      temp_cor = cor(PSI, Temp_C, use = "complete.obs"),
-      vpd_cor = cor(PSI, VPD, use = "complete.obs"),
-      .groups = 'drop'
+  correlations <- suppressWarnings({
+    analysis_data %>%
+      filter(!is.na(Time_of_Day)) %>%
+      group_by(Season, Variety, Time_of_Day) %>%
+      summarise(
+        n = n(),
+        temp_cor = round(cor(PSI, Temp_C, use = "complete.obs"), 3),
+        vpd_cor = round(cor(PSI, VPD, use = "complete.obs"), 3),
+        .groups = 'drop'
+      )
+  })
+  
+  # Create correlation table
+  correlation_table <- correlations %>%
+    gt() %>%
+    tab_header(
+      title = "Correlations between Water Potential and Environmental Variables",
+      subtitle = "By Season, Variety, and Time of Day"
+    ) %>%
+    fmt_number(
+      columns = c(temp_cor, vpd_cor),
+      decimals = 3
     )
   
-  # Mixed effects models including VPD
+  # Save correlation table
+  gtsave(correlation_table, 
+         filename = "tables/correlation_summary.html")
+  
+  gtsave(correlation_table, 
+         filename = "tables/correlation_summary.png")
+  
+  # Mixed effects models
   models <- list()
   for(time in c("Pre-dawn", "Midday")) {
     subset_data <- analysis_data %>%
       filter(Time_of_Day == time) %>%
+      filter(!is.na(PSI), !is.na(VPD)) %>%
       mutate(across(c(Tx, Season, Variety), factor))
     
-    # Model with VPD
-    model <- lmer(PSI ~ Tx + Variety + VPD + (1|Block_ID),
-                  data = subset_data,
-                  control = lmerControl(check.nobs.vs.nlev = "ignore",
-                                        check.nobs.vs.rankZ = "ignore",
-                                        check.nobs.vs.nRE = "ignore"))
-    models[[time]] <- model
+    suppressWarnings({
+      model <- lmer(PSI ~ Tx + Variety + VPD + (1|Block_ID),
+                    data = subset_data,
+                    control = lmerControl(check.nobs.vs.nlev = "ignore",
+                                          check.nobs.vs.rankZ = "ignore",
+                                          check.nobs.vs.nRE = "ignore"))
+      models[[time]] <- model
+    })
   }
   
-  # Save results
-  sink("tables/statistical_analysis_with_vpd.txt")
-  cat("STATISTICAL ANALYSIS RESULTS INCLUDING VPD\n")
-  cat("=========================================\n\n")
-  cat("1. CORRELATIONS\n")
-  print(correlations)
+  # Save detailed statistical results
+  sink("tables/statistical_analysis_detailed.txt")
+  cat("COMPREHENSIVE STATISTICAL ANALYSIS RESULTS\n")
+  cat("========================================\n\n")
+  
+  cat("1. SUMMARY STATISTICS\n")
+  cat("-----------------\n\n")
+  print(basic_stats, n = Inf)
   cat("\n\n")
-  cat("2. MIXED EFFECTS MODEL RESULTS\n")
+  
+  cat("2. CORRELATIONS\n")
+  cat("-------------\n\n")
+  print(correlations, n = Inf)
+  cat("\n\n")
+  
+  cat("3. MIXED EFFECTS MODEL RESULTS\n")
+  cat("--------------------------\n\n")
   for(time in c("Pre-dawn", "Midday")) {
     cat(sprintf("\n%s Analysis:\n", time))
+    cat(paste(rep("=", nchar(time) + 10), collapse=""), "\n\n")
     print(summary(models[[time]]))
-    cat("\n")
+    cat("\nANOVA Results:\n")
+    cat("--------------\n")
+    print(anova(models[[time]]))
+    cat("\n\n")
   }
+  
   sink()
   
   return(list(
     basic_stats = basic_stats,
     correlations = correlations,
-    models = models
+    models = models,
+    tables = list(
+      basic_stats_table = basic_stats_table,
+      correlation_table = correlation_table
+    )
   ))
 }
 
+# Helper function to create output directories
+create_output_dirs <- function() {
+  dirs <- c("figures", "tables")
+  for(dir in dirs) {
+    if(!dir.exists(dir)) dir.create(dir)
+  }
+}
 
 # Part 3: Visualization Functions ------------------------------------------------
 
-# Create publication plots with temperature and VPD
+# Create comparison plots with temperature and VPD
 create_comparison_plots <- function(combined_data, cimis_data) {
+  message("Starting plot creation...")
   plots <- list()
   
-  for (var in c("CH", "CS")) {
-    for (year in c("2022", "2023")) {
-      # Subset water potential data
-      subset_wp <- combined_data %>%
-        filter(
-          Variety == var,
-          pot_type == "Stem",
-          Season == year
-        ) %>%
-        filter(!is.na(Date))
-      
-      # Subset matching CIMIS data
-      subset_cimis <- cimis_data %>%
-        filter(Date %in% subset_wp$Date)
-      
-      if (nrow(subset_wp) > 0 && nrow(subset_cimis) > 0) {
-        # Create plot
-        p1 <- ggplot() +
-          geom_point(data = subset_wp, 
-                     aes(x = Date, y = PSI, color = Time_of_Day, shape = Tx),
-                     alpha = 0.7, size = 3) +
-          geom_smooth(data = subset_wp,
-                      aes(x = Date, y = PSI, color = Time_of_Day),
-                      method = "lm", se = TRUE, alpha = 0.2) +
-          geom_line(data = subset_cimis,
-                    aes(x = Date, y = Temp_C / 10, linetype = "Temperature"),
-                    color = "red", linewidth = 1) +
-          geom_line(data = subset_cimis,
-                    aes(x = Date, y = VPD / 2, linetype = "VPD"),
-                    color = "blue", linewidth = 1) +
-          scale_y_continuous(
-            name = "Water Potential (MPa)",
-            sec.axis = sec_axis(~ . * 10, name = "Temperature (°C)")
-          ) +
-          scale_linetype_manual(
-            name = "Environmental Variables",
-            values = c("Temperature" = "solid", "VPD" = "dashed")
-          ) +
-          scale_color_brewer(palette = "Set1") +
-          labs(
-            title = paste(var, year, "- Stem Water Potential with Temperature and VPD"),
-            x = "Date",
-            color = "Time of Day",
-            shape = "Treatment"
-          ) +
-          theme_classic() +
-          theme(
-            legend.position = "bottom",
-            legend.box = "vertical",
-            plot.title = element_text(size = 12, face = "bold"),
-            axis.text.x = element_text(angle = 45, hjust = 1),
-            axis.text = element_text(size = 10),
-            axis.title = element_text(size = 11),
-            panel.grid.major = element_line(color = "grey90")
-          ) +
-          scale_x_date(date_breaks = "2 weeks", date_labels = "%b %d")
+  # Validate input data
+  if(is.null(combined_data) || is.null(cimis_data)) {
+    stop("Both combined_data and cimis_data must be provided")
+  }
+  
+  # Required columns check
+  required_cols_combined <- c("Date", "PSI", "Variety", "Time_of_Day", "Tx", "pot_type")
+  required_cols_cimis <- c("Date", "Temp_C", "VPD")
+  
+  validate_columns(combined_data, required_cols_combined, "combined_data")
+  validate_columns(cimis_data, required_cols_cimis, "cimis_data")
+  
+  # Merge water potential and CIMIS data
+  analysis_data <- combined_data %>%
+    left_join(cimis_data %>% dplyr::select(Date, Temp_C, VPD), by = "Date") %>%
+    mutate(Date = as.Date(Date))  # Ensure Date is properly formatted
+  
+  # Create plots for each variety, year, and pot_type combination
+  for(var in c("CH", "CS")) {
+    for(year in c("2022", "2023")) {
+      for(pot in unique(combined_data$pot_type)) {
+        message(sprintf("Creating plot for %s %s %s", var, year, pot))
         
-        # Add plot to the list
-        plot_key <- paste(var, year, "stem_comparison", sep = "_")
-        plots[[plot_key]] <- p1
-        message("Created comparison plot for: ", plot_key)
+        # Subset data
+        subset_data <- analysis_data %>%
+          filter(
+            Variety == var,
+            Season == year,
+            pot_type == pot,
+            !is.na(PSI),
+            !is.na(VPD)
+          )
+        
+        if(nrow(subset_data) > 0) {
+          # Create plot
+          plot_key <- paste(var, year, tolower(pot), sep="_")
+          
+          p <- ggplot() +
+            # Water potential points
+            geom_point(data = subset_data, 
+                       aes(x = Date, y = PSI, color = Time_of_Day, shape = Tx),
+                       alpha = 0.7, size = 3) +
+            
+            # Water potential trend lines
+            geom_smooth(data = subset_data,
+                        aes(x = Date, y = PSI, color = Time_of_Day),
+                        method = "loess", se = TRUE, alpha = 0.2) +
+            
+            # Temperature line
+            geom_line(data = subset_data,
+                      aes(x = Date, y = -Temp_C * 0.2, linetype = "Temperature"),
+                      color = "red", linewidth = 1) +
+            
+            # VPD line
+            geom_line(data = subset_data,
+                      aes(x = Date, y = VPD * -2, linetype = "VPD"),
+                      color = "blue", linewidth = 1) +
+            
+            # Scales and labels
+            scale_x_date(date_breaks = "1 month", date_labels = "%b %d") +
+            scale_y_continuous(
+              name = "Water Potential (MPa)",
+              sec.axis = sec_axis(~ -. / 0.2, name = "Temperature (°C)")
+            ) +
+            scale_linetype_manual(
+              name = "Environmental Variables",
+              values = c("Temperature" = "solid", "VPD" = "dashed")
+            ) +
+            scale_color_brewer(palette = "Set1") +
+            
+            # Labels
+            labs(
+              title = paste(var, year, pot, "Water Potential with Environmental Variables"),
+              x = "Date",
+              color = "Time of Day",
+              shape = "Treatment"
+            ) +
+            
+            # Theme
+            theme_classic() +
+            theme(
+              legend.position = "bottom",
+              legend.box = "vertical",
+              plot.title = element_text(size = 12, face = "bold"),
+              axis.text.x = element_text(angle = 45, hjust = 1),
+              axis.text = element_text(size = 10),
+              axis.title = element_text(size = 11)
+            )
+          
+          plots[[plot_key]] <- p
+          message("Created plot for: ", plot_key)
+        } else {
+          message("No data available for: ", var, " ", year, " ", pot)
+        }
       }
     }
   }
   
+  message("Plot creation complete. Created ", length(plots), " plots.")
   return(plots)
 }
 
-
-# Save plots to specified directory
+# Save plots function
 save_plots <- function(plots, output_dir = "figures") {
+  message("Starting to save plots...")
+  
   # Ensure the output directory exists
   if (!dir.exists(output_dir)) {
     dir.create(output_dir)
+    message("Created output directory: ", output_dir)
   }
   
   # Loop through all plots in the list and save them
-  lapply(names(plots), function(plot_name) {
-    file_path <- file.path(output_dir, paste0(plot_name, ".png"))
-    ggsave(
-      filename = file_path,
-      plot = plots[[plot_name]],
-      width = 10,  # Adjust dimensions as needed
-      height = 8
-    )
-    message("Saved plot: ", file_path)
-  })
+  for (plot_name in names(plots)) {
+    tryCatch({
+      file_path <- file.path(output_dir, paste0(plot_name, ".png"))
+      message("Saving plot to: ", file_path)
+      
+      ggsave(
+        filename = file_path,
+        plot = plots[[plot_name]],
+        width = 10,
+        height = 8,
+        dpi = 300
+      )
+      
+      message("Successfully saved plot: ", plot_name)
+    }, error = function(e) {
+      message("Error saving plot '", plot_name, "': ", e$message)
+    })
+  }
+  message("Finished saving all plots")
 }
 
+# Part 4: Main Analysis Function ------------------------------------------------
 
-
-
-# Part 4: Table Creation and Summary Functions ------------------------------------------
-
-# Create output directories function
-create_output_dirs <- function() {
-  if (!dir.exists("figures")) dir.create("figures")
-  if (!dir.exists("tables")) dir.create("tables")
-}
-
-# Updated table creation function with NA handling
-create_summary_tables <- function(data) {
-  # Remove NA Time_of_Day entries before summarizing
-  summary_stats <- data %>%
-    filter(!is.na(Time_of_Day)) %>%  # Remove NA entries
-    group_by(Time_of_Day, Variety, Treatment) %>%
-    summarise(
-      Mean_PSI = mean(PSI, na.rm = TRUE),
-      SD_PSI = sd(PSI, na.rm = TRUE),
-      SE_PSI = SD_PSI / sqrt(sum(!is.na(PSI))),
-      Min_PSI = min(PSI, na.rm = TRUE),
-      Max_PSI = max(PSI, na.rm = TRUE),
-      n = sum(!is.na(PSI)),
-      .groups = "drop"  # Explicitly drop grouping
-    ) %>%
-    filter(!is.infinite(Min_PSI))  # Remove any infinite values
+run_complete_analysis <- function() {
+  message("Starting analysis...")
   
-  # Create heatwave summary separately
-  heatwave_stats <- data %>%
-    filter(is.na(Time_of_Day)) %>%
-    group_by(Variety, Treatment) %>%
-    summarise(
-      Time_of_Day = "Heatwave",
-      Mean_PSI = mean(PSI, na.rm = TRUE),
-      SD_PSI = sd(PSI, na.rm = TRUE),
-      SE_PSI = SD_PSI / sqrt(sum(!is.na(PSI))),
-      Min_PSI = min(PSI, na.rm = TRUE),
-      Max_PSI = max(PSI, na.rm = TRUE),
-      n = sum(!is.na(PSI)),
-      .groups = "drop"
-    ) %>%
-    filter(!is.infinite(Min_PSI))
+  # Load data with validation
+  message("Loading 2022 data...")
+  data_2022 <- load_wp_2022()
+  if(is.null(data_2022)) stop("Failed to load 2022 data")
   
-  # Combine regular and heatwave stats
-  all_stats <- bind_rows(summary_stats, heatwave_stats)
+  message("Loading 2023 data...")
+  data_2023 <- load_wp_2023()
+  if(is.null(data_2023)) stop("Failed to load 2023 data")
   
-  # Format table using gt
-  gt_table <- all_stats %>%
-    gt() %>%
-    fmt_number(
-      columns = c(Mean_PSI, SD_PSI, SE_PSI, Min_PSI, Max_PSI),
-      decimals = 2
-    ) %>%
-    tab_header(
-      title = "Water Potential Summary Statistics",
-      subtitle = "By Variety, Treatment, and Time of Day"
-    ) %>%
-    tab_options(
-      table.border.top.style = "none",
-      table.border.bottom.style = "none",
-      column_labels.border.bottom.style = "solid",
-      column_labels.border.bottom.width = 2,
-      table_body.border.top.style = "solid",
-      table_body.border.top.width = 1
-    )
+  message("Loading CIMIS 2022 data...")
+  cimis_2022 <- load_cimis_2022()
+  if(is.null(cimis_2022)) stop("Failed to load CIMIS 2022 data")
+  
+  message("Loading CIMIS 2023 data...")
+  cimis_2023 <- load_cimis_2023()
+  if(is.null(cimis_2023)) stop("Failed to load CIMIS 2023 data")
+  
+  # Process data
+  message("Processing water potential data...")
+  combined_data <- process_water_potential(data_2022, data_2023)
+  
+  message("Processing CIMIS data...")
+  cimis_data <- process_cimis(cimis_2022, cimis_2023)
+  
+  # Create plots
+  message("Creating comparison plots...")
+  plots <- create_comparison_plots(combined_data, cimis_data)
+  
+  message("Saving plots...")
+  save_plots(plots)
+  
+  # Run statistical analysis
+  message("Running statistical analysis...")
+  stats_results <- perform_statistical_analysis(combined_data, cimis_data)
+  
+  message("Analysis complete!")
   
   return(list(
-    raw_stats = all_stats,
-    formatted_table = gt_table
+    combined_data = combined_data,
+    cimis_data = cimis_data,
+    plots = plots,
+    stats = stats_results
   ))
+}
+
+# Helper function to ensure required files exist
+check_required_files <- function() {
+  required_files <- c(
+    "Tyree_2022_Cleaned",
+    "Clean_Tyree_Water_Potentials_2023",
+    "CIMIS_growing_season_2022",
+    "CIMIS_2023"
+  )
+  
+  missing_files <- required_files[!sapply(required_files, exists)]
+  
+  if(length(missing_files) > 0) {
+    message("Missing required data files:")
+    print(missing_files)
+    return(FALSE)
+  }
+  
+  return(TRUE)
 }
 
 # Updated table export function that doesn't rely on gtable

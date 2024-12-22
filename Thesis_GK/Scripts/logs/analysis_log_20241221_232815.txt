@@ -1,0 +1,17 @@
+[2024-12-21 23:28:21] Checking R environment...
+[2024-12-21 23:28:21] R version: 4.4.2
+[2024-12-21 23:28:21] Sourcing required scripts...
+[2024-12-21 23:28:21] Successfully loaded: 1_packages_setup.R
+[2024-12-21 23:28:21] Successfully loaded: 2_data_loading.R
+[2024-12-21 23:28:21] Successfully loaded: 3_data_processing.R
+[2024-12-21 23:28:21] Successfully loaded: 4_statistical_analysis.R
+[2024-12-21 23:28:21] Successfully loaded: 5_visualization.R
+[2024-12-21 23:28:21] Successfully loaded: 6_export_functions.R
+[2024-12-21 23:28:21] Successfully loaded: 7_main_analysis.R
+[2024-12-21 23:28:21] Validating file paths...
+[2024-12-21 23:28:21] ERROR: File not found: licor_comb_2022_final.csv
+[2024-12-21 23:28:21] ERROR: File not found: 2023_comb_Licor.xlsx
+[2024-12-21 23:28:21] ERROR: File not found: CIMIS_growing_season_2022.csv
+[2024-12-21 23:28:21] ERROR: File not found: CIMIS_2023.csv
+[2024-12-21 23:28:21] ERROR in analysis: Missing required data files. Check log for details.
+[2024-12-21 23:28:21] Analysis failed. Check log file for details.

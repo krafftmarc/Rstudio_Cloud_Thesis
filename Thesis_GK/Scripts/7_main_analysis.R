@@ -24,6 +24,12 @@ main_analysis <- function(data_paths = default_paths) {
   licor_2023 <- process_licor_data(all_data$licor_2023, 2023)
   licor_combined <- bind_rows(licor_2022, licor_2023)
   
+  message("Checking combined data structure:")
+  message("Treatment levels: ", paste(unique(licor_combined$treatment), collapse=", "))
+  message("Years: ", paste(unique(licor_combined$year), collapse=", "))
+  message("Number of rows by treatment and year:")
+  print(table(licor_combined$treatment, licor_combined$year))
+  
   cimis_2022 <- process_cimis_data(all_data$cimis_2022, 2022)
   cimis_2023 <- process_cimis_data(all_data$cimis_2023, 2023)
   
@@ -40,6 +46,9 @@ main_analysis <- function(data_paths = default_paths) {
   treatment_plots <- plot_treatment_effects(licor_combined)
   vpd_response_plot <- plot_vpd_response(licor_combined)
   annual_comparison <- plot_annual_comparison(basic_stats_combined)
+  wuei_plot <- plot_WUEi(licor_combined)
+  ggsave("output_figures/WUEi_plot.png", plot = wuei_plot, width = 10, height = 6, dpi = 300)
+  
   
   # Compile results
   results <- list(

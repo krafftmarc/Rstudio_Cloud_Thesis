@@ -1,0 +1,16 @@
+[2024-12-22 01:33:02] Checking R environment...
+[2024-12-22 01:33:02] R version: 4.4.2
+[2024-12-22 01:33:02] Sourcing required scripts...
+[2024-12-22 01:33:02] Successfully loaded: 1_packages_setup.R
+[2024-12-22 01:33:02] Successfully loaded: 2_data_loading.R
+[2024-12-22 01:33:02] Successfully loaded: 3_data_processing.R
+[2024-12-22 01:33:02] Successfully loaded: data_quality_checks.R
+[2024-12-22 01:33:02] Successfully loaded: 4_statistical_analysis.R
+[2024-12-22 01:33:02] Successfully loaded: 5_visualization.R
+[2024-12-22 01:33:02] Successfully loaded: 6_export_functions.R
+[2024-12-22 01:33:02] Successfully loaded: 7_main_analysis.R
+[2024-12-22 01:33:02] Validating pre-loaded dataframes...
+[2024-12-22 01:33:02] All required dataframes are present.
+[2024-12-22 01:33:02] Starting analysis...
+[2024-12-22 01:33:02] ERROR in analysis: No valid hhmmss columns found in 2022 data
+[2024-12-22 01:33:02] Analysis failed. Check log file for details.

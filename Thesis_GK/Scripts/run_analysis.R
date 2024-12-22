@@ -1,6 +1,9 @@
 # run_analysis.R
 # Main script to execute the irrigation treatment analysis
 
+# Install and load required packages
+source("1_packages_setup.R")
+
 # Initialize logging
 log_file <- file.path("logs", format(Sys.time(), "analysis_log_%Y%m%d_%H%M%S.txt"))
 dir.create("logs", showWarnings = FALSE)
@@ -32,6 +35,8 @@ source_scripts <- function() {
     "1_packages_setup.R",
     "2_data_loading.R",
     "3_data_processing.R",
+    "data_quality_checks.R",
+    "validation_utils.R",  # Add this line
     "4_statistical_analysis.R",
     "5_visualization.R",
     "6_export_functions.R",
@@ -58,22 +63,23 @@ source_scripts <- function() {
 
 # Function to validate file paths
 validate_paths <- function(paths) {
-  log_message("Validating file paths...")
+  log_message("Validating pre-loaded dataframes...")
   
-  missing_files <- sapply(paths, function(path) {
-    if (!file.exists(path)) {
-      log_message(paste("ERROR: File not found:", path))
+  missing_data <- sapply(names(paths), function(name) {
+    if (!exists(paths[[name]], envir = .GlobalEnv)) {
+      log_message(paste("ERROR: Required dataframe", paths[[name]], "is missing in the environment."))
       return(TRUE)
     }
     return(FALSE)
   })
   
-  if (any(missing_files)) {
-    stop("Missing required data files. Check log for details.")
+  if (any(missing_data)) {
+    stop("One or more required dataframes are missing. Check log for details.")
   }
   
-  log_message("All required files found.")
+  log_message("All required dataframes are present.")
 }
+
 
 # Main execution block
 tryCatch({
@@ -83,12 +89,12 @@ tryCatch({
   # Source all required scripts
   source_scripts()
   
-  # Set default file paths
+  # Define paths using the actual dataframe names in the environment
   default_paths <- list(
-    licor_2022 = "licor_comb_2022_final.csv",
-    licor_2023 = "2023_comb_Licor.xlsx",
-    cimis_2022 = "CIMIS_growing_season_2022.csv",
-    cimis_2023 = "CIMIS_2023.csv"
+    licor_2022 = "licor_comb_2022_final",
+    licor_2023 = "X2023_comb_Licor",
+    cimis_2022 = "CIMIS_growing_season_2022",
+    cimis_2023 = "CIMIS_2023"
   )
   
   # Validate paths before running analysis
@@ -115,6 +121,8 @@ tryCatch({
 }, warning = function(w) {
   log_message(paste("WARNING:", w$message))
 })
+
+warnings()
 
 # Example of running with custom paths:
 # custom_paths <- list(

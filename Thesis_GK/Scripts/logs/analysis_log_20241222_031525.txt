@@ -1,0 +1,15 @@
+[2024-12-22 03:15:33] Checking R environment...
+[2024-12-22 03:15:33] R version: 4.4.2
+[2024-12-22 03:15:33] Sourcing required scripts...
+[2024-12-22 03:15:33] Successfully loaded: 1_packages_setup.R
+[2024-12-22 03:15:33] Successfully loaded: 2_data_loading.R
+[2024-12-22 03:15:33] Successfully loaded: 3_data_processing.R
+[2024-12-22 03:15:33] Successfully loaded: data_quality_checks.R
+[2024-12-22 03:15:33] Successfully loaded: validation_utils.R
+[2024-12-22 03:15:33] Successfully loaded: 4_statistical_analysis.R
+[2024-12-22 03:15:33] ERROR loading 5_visualization.R : 5_visualization.R:68:51: unexpected '}'
+67:     labs(title = "Intrinsic Water Use Efficiency (WUEi)",
+68:          y = expression(WUE[i]~(μmol~CO[2]~mol^-1}
+                                                      ^
+[2024-12-22 03:15:33] ERROR in analysis: Failed to load 5_visualization.R
+[2024-12-22 03:15:33] Analysis failed. Check log file for details.

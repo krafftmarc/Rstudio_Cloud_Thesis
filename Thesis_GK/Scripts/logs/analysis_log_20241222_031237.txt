@@ -1,0 +1,15 @@
+[2024-12-22 03:12:45] Checking R environment...
+[2024-12-22 03:12:45] R version: 4.4.2
+[2024-12-22 03:12:45] Sourcing required scripts...
+[2024-12-22 03:12:45] Successfully loaded: 1_packages_setup.R
+[2024-12-22 03:12:45] Successfully loaded: 2_data_loading.R
+[2024-12-22 03:12:45] Successfully loaded: 3_data_processing.R
+[2024-12-22 03:12:45] Successfully loaded: data_quality_checks.R
+[2024-12-22 03:12:45] Successfully loaded: validation_utils.R
+[2024-12-22 03:12:45] Successfully loaded: 4_statistical_analysis.R
+[2024-12-22 03:12:45] ERROR loading 5_visualization.R : 5_visualization.R:69:58: unexpected symbol
+68:     labs(title = "Intrinsic Water Use Efficiency (WUEi)",
+69:          y = expression(WUE[i]~(μmol~CO[2]~mol^{-1}~H[2]O
+                                                             ^
+[2024-12-22 03:12:45] ERROR in analysis: Failed to load 5_visualization.R
+[2024-12-22 03:12:45] Analysis failed. Check log file for details.

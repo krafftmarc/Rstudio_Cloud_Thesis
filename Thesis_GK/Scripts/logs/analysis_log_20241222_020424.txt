@@ -1,0 +1,17 @@
+[2024-12-22 02:04:31] Checking R environment...
+[2024-12-22 02:04:31] R version: 4.4.2
+[2024-12-22 02:04:31] Sourcing required scripts...
+[2024-12-22 02:04:31] Successfully loaded: 1_packages_setup.R
+[2024-12-22 02:04:31] Successfully loaded: 2_data_loading.R
+[2024-12-22 02:04:31] Successfully loaded: 3_data_processing.R
+[2024-12-22 02:04:31] Successfully loaded: data_quality_checks.R
+[2024-12-22 02:04:31] Successfully loaded: validation_utils.R
+[2024-12-22 02:04:31] Successfully loaded: 4_statistical_analysis.R
+[2024-12-22 02:04:31] Successfully loaded: 5_visualization.R
+[2024-12-22 02:04:31] Successfully loaded: 6_export_functions.R
+[2024-12-22 02:04:31] Successfully loaded: 7_main_analysis.R
+[2024-12-22 02:04:31] Validating pre-loaded dataframes...
+[2024-12-22 02:04:31] All required dataframes are present.
+[2024-12-22 02:04:31] Starting analysis...
+[2024-12-22 02:04:31] ERROR in analysis: Error processing data for year 2022 : could not find function "filter_physiological_bounds"
+[2024-12-22 02:04:31] Analysis failed. Check log file for details.

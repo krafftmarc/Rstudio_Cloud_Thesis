@@ -1,0 +1,17 @@
+[2024-12-22 03:25:12] Checking R environment...
+[2024-12-22 03:25:12] R version: 4.4.2
+[2024-12-22 03:25:12] Sourcing required scripts...
+[2024-12-22 03:25:12] Successfully loaded: 1_packages_setup.R
+[2024-12-22 03:25:12] Successfully loaded: 2_data_loading.R
+[2024-12-22 03:25:12] Successfully loaded: 3_data_processing.R
+[2024-12-22 03:25:12] Successfully loaded: data_quality_checks.R
+[2024-12-22 03:25:12] Successfully loaded: validation_utils.R
+[2024-12-22 03:25:12] Successfully loaded: 4_statistical_analysis.R
+[2024-12-22 03:25:12] Successfully loaded: 5_visualization.R
+[2024-12-22 03:25:12] Successfully loaded: 6_export_functions.R
+[2024-12-22 03:25:12] Successfully loaded: 7_main_analysis.R
+[2024-12-22 03:25:12] Validating pre-loaded dataframes...
+[2024-12-22 03:25:12] All required dataframes are present.
+[2024-12-22 03:25:12] Starting analysis...
+[2024-12-22 03:25:12] ERROR in analysis: In argument: `stress_level = case_when(...)`.
+[2024-12-22 03:25:12] Analysis failed. Check log file for details.

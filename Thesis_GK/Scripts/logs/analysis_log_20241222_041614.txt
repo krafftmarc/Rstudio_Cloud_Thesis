@@ -1,0 +1,19 @@
+[2024-12-22 04:16:20] Checking R environment...
+[2024-12-22 04:16:20] R version: 4.4.2
+[2024-12-22 04:16:20] Sourcing required scripts...
+[2024-12-22 04:16:20] Successfully loaded: 1_packages_setup.R
+[2024-12-22 04:16:20] Successfully loaded: 2_data_loading.R
+[2024-12-22 04:16:20] Successfully loaded: 3_data_processing.R
+[2024-12-22 04:16:20] Successfully loaded: data_quality_checks.R
+[2024-12-22 04:16:20] Successfully loaded: validation_utils.R
+[2024-12-22 04:16:20] Successfully loaded: 4_statistical_analysis.R
+[2024-12-22 04:16:20] Successfully loaded: 5_visualization.R
+[2024-12-22 04:16:20] Successfully loaded: 6_export_functions.R
+[2024-12-22 04:16:20] Successfully loaded: 7_main_analysis.R
+[2024-12-22 04:16:20] Validating pre-loaded dataframes...
+[2024-12-22 04:16:20] All required dataframes are present.
+[2024-12-22 04:16:20] Starting analysis...
+[2024-12-22 04:16:21] WARNING: [38;5;232mThere was 1 warning in `mutate()`.[39m
+[38;5;232m[36mℹ[38;5;232m In argument: `treatment = case_when(...)`.[39m
+Caused by warning:
+[33m![39m NAs introduced by coercion

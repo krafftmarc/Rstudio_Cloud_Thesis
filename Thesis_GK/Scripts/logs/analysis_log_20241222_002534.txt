@@ -1,0 +1,15 @@
+[2024-12-22 00:25:40] Checking R environment...
+[2024-12-22 00:25:40] R version: 4.4.2
+[2024-12-22 00:25:40] Sourcing required scripts...
+[2024-12-22 00:25:40] Successfully loaded: 1_packages_setup.R
+[2024-12-22 00:25:40] Successfully loaded: 2_data_loading.R
+[2024-12-22 00:25:40] Successfully loaded: 3_data_processing.R
+[2024-12-22 00:25:40] Successfully loaded: 4_statistical_analysis.R
+[2024-12-22 00:25:40] Successfully loaded: 5_visualization.R
+[2024-12-22 00:25:40] Successfully loaded: 6_export_functions.R
+[2024-12-22 00:25:40] Successfully loaded: 7_main_analysis.R
+[2024-12-22 00:25:40] Validating pre-loaded dataframes...
+[2024-12-22 00:25:40] All required dataframes are present.
+[2024-12-22 00:25:40] Starting analysis...
+[2024-12-22 00:25:40] ERROR in analysis: Can't combine `..1$Fv/Fm` <character> and `..2$Fv/Fm` <double>.
+[2024-12-22 00:25:40] Analysis failed. Check log file for details.

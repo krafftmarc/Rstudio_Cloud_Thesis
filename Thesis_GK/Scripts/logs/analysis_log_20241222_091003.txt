@@ -1,0 +1,11 @@
+[2024-12-22 09:10:03] Checking R environment...
+[2024-12-22 09:10:03] R version: 4.4.2
+[2024-12-22 09:10:03] Sourcing required scripts...
+[2024-12-22 09:10:03] Successfully loaded: 1_packages_setup.R
+[2024-12-22 09:10:03] Successfully loaded: 2_data_loading.R
+[2024-12-22 09:10:03] ERROR loading 3_data_processing.R : 3_data_processing.R:294:1: unexpected '}'
+293:   return(processed_data)
+294: }
+     ^
+[2024-12-22 09:10:03] ERROR in analysis: Failed to load 3_data_processing.R
+[2024-12-22 09:10:03] Analysis failed. Check log file for details.

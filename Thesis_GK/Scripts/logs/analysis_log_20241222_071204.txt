@@ -1,0 +1,11 @@
+[2024-12-22 07:12:13] Checking R environment...
+[2024-12-22 07:12:13] R version: 4.4.2
+[2024-12-22 07:12:13] Sourcing required scripts...
+[2024-12-22 07:12:13] Successfully loaded: 1_packages_setup.R
+[2024-12-22 07:12:13] Successfully loaded: 2_data_loading.R
+[2024-12-22 07:12:13] ERROR loading 3_data_processing.R : 3_data_processing.R:300:1: unexpected '['
+299: 
+300: [
+     ^
+[2024-12-22 07:12:13] ERROR in analysis: Failed to load 3_data_processing.R
+[2024-12-22 07:12:13] Analysis failed. Check log file for details.

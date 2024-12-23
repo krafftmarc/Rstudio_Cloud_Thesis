@@ -33,14 +33,13 @@ check_environment <- function() {
 source_scripts <- function() {
   required_scripts <- c(
     "1_packages_setup.R",
+    "validation_utils.R",  # Moved earlier in sequence
     "2_data_loading.R",
     "3_data_processing.R",
-    "data_quality_checks.R",
-    "validation_utils.R",  # Add this line
     "4_statistical_analysis.R",
     "5_visualization.R",
     "6_export_functions.R",
-    "7_main_analysis.R"
+    "7_main_analysis.R"    # Main analysis should be last
   )
   
   log_message("Sourcing required scripts...")
@@ -80,56 +79,55 @@ validate_paths <- function(paths) {
   log_message("All required dataframes are present.")
 }
 
+# Main function to run analysis
+run_analysis <- function(paths = default_paths) {
+  results <- tryCatch({
+    # Initialize environment
+    check_environment()
+    
+    # Source all required scripts
+    source_scripts()
+    
+    # Validate paths before running analysis
+    validate_paths(paths)
+    
+    # Run the analysis
+    log_message("Starting analysis...")
+    results <- main_analysis(paths)
+    
+    # Print success message
+    log_message("\nAnalysis completed successfully!")
+    log_message("Results have been exported to:")
+    log_message("  - output_tables/")
+    log_message("  - output_figures/")
+    
+    # Save results object
+    save(results, file = "analysis_results.RData")
+    log_message("Results object saved to: analysis_results.RData")
+    
+    # Return results
+    return(results)
+    
+  }, error = function(e) {
+    log_message(paste("ERROR in analysis:", e$message))
+    log_message("Analysis failed. Check log file for details.")
+    stop(e)
+  }, warning = function(w) {
+    log_message(paste("WARNING:", w$message))
+  })
+  
+  return(results)
+}
 
-# Main execution block
-tryCatch({
-  # Initialize environment
-  check_environment()
-  
-  # Source all required scripts
-  source_scripts()
-  
-  # Define paths using the actual dataframe names in the environment
-  default_paths <- list(
-    licor_2022 = "licor_comb_2022_final",
-    licor_2023 = "X2023_comb_Licor",
-    cimis_2022 = "CIMIS_growing_season_2022",
-    cimis_2023 = "CIMIS_2023"
-  )
-  
-  # Validate paths before running analysis
-  validate_paths(default_paths)
-  
-  # Run the analysis
-  log_message("Starting analysis...")
-  results <- main_analysis(default_paths)
-  
-  # Print success message
-  log_message("\nAnalysis completed successfully!")
-  log_message("Results have been exported to:")
-  log_message("  - output_tables/")
-  log_message("  - output_figures/")
-  
-  # Save results object
-  save(results, file = "analysis_results.RData")
-  log_message("Results object saved to: analysis_results.RData")
-  
-}, error = function(e) {
-  log_message(paste("ERROR in analysis:", e$message))
-  log_message("Analysis failed. Check log file for details.")
-  stop(e)
-}, warning = function(w) {
-  log_message(paste("WARNING:", w$message))
-})
+# Define paths using the actual dataframe names in the environment
+default_paths <- list(
+  licor_2022 = "licor_comb_2022_final",
+  licor_2023 = "X2023_comb_Licor",
+  cimis_2022 = "CIMIS_growing_season_2022",
+  cimis_2023 = "CIMIS_2023"
+)
 
-warnings()
-
-# Example of running with custom paths:
-# custom_paths <- list(
-#   licor_2022 = "path/to/licor_2022.csv",
-#   licor_2023 = "path/to/licor_2023.xlsx",
-#   cimis_2022 = "path/to/cimis_2022.csv",
-#   cimis_2023 = "path/to/cimis_2023.csv"
-# )
-# 
-# results <- main_analysis(custom_paths)
+# If this script is being sourced, don't auto-execute
+if (!exists("IS_SOURCED")) {
+  IS_SOURCED <- TRUE
+}

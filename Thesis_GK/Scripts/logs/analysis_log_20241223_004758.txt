@@ -1,0 +1,13 @@
+[2024-12-23 00:48:01] Checking R environment...
+[2024-12-23 00:48:01] R version: 4.4.2
+[2024-12-23 00:48:01] Sourcing required scripts...
+[2024-12-23 00:48:01] Successfully loaded: 1_packages_setup.R
+[2024-12-23 00:48:01] Successfully loaded: 2_data_loading.R
+[2024-12-23 00:48:01] Successfully loaded: 3_data_processing.R
+[2024-12-23 00:48:01] Successfully loaded: 4_statistical_analysis.R
+[2024-12-23 00:48:01] ERROR loading 5_visualization.R : 5_visualization.R:389:0: unexpected end of input
+387:   return(combined_plots)
+388: }
+    ^
+[2024-12-23 00:48:01] ERROR in analysis: Failed to load 5_visualization.R
+[2024-12-23 00:48:01] Analysis failed. Check log file for details.

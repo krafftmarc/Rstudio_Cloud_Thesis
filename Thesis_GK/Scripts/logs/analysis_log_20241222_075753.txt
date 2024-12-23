@@ -1,0 +1,11 @@
+[2024-12-22 07:57:58] Checking R environment...
+[2024-12-22 07:57:58] R version: 4.4.2
+[2024-12-22 07:57:58] Sourcing required scripts...
+[2024-12-22 07:57:58] Successfully loaded: 1_packages_setup.R
+[2024-12-22 07:57:58] Successfully loaded: 2_data_loading.R
+[2024-12-22 07:57:58] Successfully loaded: 3_data_processing.R
+[2024-12-22 07:57:58] Successfully loaded: data_quality_checks.R
+[2024-12-22 07:57:58] Successfully loaded: validation_utils.R
+[2024-12-22 07:57:58] ERROR loading 4_statistical_analysis.R : bad 'data': object 'data_scaled' not found
+[2024-12-22 07:57:58] ERROR in analysis: Failed to load 4_statistical_analysis.R
+[2024-12-22 07:57:58] Analysis failed. Check log file for details.

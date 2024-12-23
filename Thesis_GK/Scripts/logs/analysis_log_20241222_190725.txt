@@ -1,0 +1,6 @@
+[2024-12-22 19:07:32] Checking R environment...
+[2024-12-22 19:07:32] R version: 4.4.2
+[2024-12-22 19:07:32] Sourcing required scripts...
+[2024-12-22 19:07:33] ERROR loading 1_packages_setup.R : there is no package called ‘lmerTest’
+[2024-12-22 19:07:33] ERROR in analysis: Failed to load 1_packages_setup.R
+[2024-12-22 19:07:33] Analysis failed. Check log file for details.

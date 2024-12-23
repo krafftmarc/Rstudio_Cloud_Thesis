@@ -1,5 +1,8 @@
 # 3_data_processing.R
-# Functions for processing and cleaning data
+
+#------------------------------------------------------------------------------
+# Part 1: LICOR Data Processing Functions
+#------------------------------------------------------------------------------
 
 # Helper function to validate time columns with improved checks
 validate_time_columns <- function(data, year) {
@@ -9,10 +12,9 @@ validate_time_columns <- function(data, year) {
     stop(paste("No hhmmss columns found in", year, "data"))
   }
   
-  # Check for empty or invalid time columns
   valid_cols <- sapply(hhmmss_cols, function(col) {
     !all(is.na(data[[col]])) && 
-      any(grepl("^(05|13)[0-9]{2}", data[[col]]))  # Check for expected time patterns
+      any(grepl("^(05|13)[0-9]{2}", data[[col]]))
   })
   
   valid_hhmmss_cols <- hhmmss_cols[valid_cols]
@@ -37,21 +39,16 @@ clean_time_values <- function(time_values, year) {
     
     t <- as.character(t)
     
-    # Handle different formats
     if (grepl(":", t)) {
-      # Already in HH:MM:SS format
       return(t)
     } else if (nchar(t) == 6) {
-      # Convert HHMMSS to HH:MM:SS
       return(sprintf("%02d:%02d:%02d", 
                      as.numeric(substr(t, 1, 2)),
                      as.numeric(substr(t, 3, 4)),
                      as.numeric(substr(t, 5, 6))))
     } else {
-      # Try to handle other numeric formats
       t_num <- as.numeric(t)
       if (!is.na(t_num)) {
-        # Convert to HHMMSS format
         return(sprintf("%06d", t_num))
       }
     }
@@ -63,10 +60,8 @@ clean_time_values <- function(time_values, year) {
 
 # Helper function to clean time columns
 clean_time_columns <- function(data, time_col) {
-  # Get all hhmmss columns
   hhmmss_cols <- grep("hhmmss", names(data), value = TRUE)
   
-  # If we have multiple columns, keep only the validated one
   if (length(hhmmss_cols) > 1) {
     data <- data %>%
       select(-one_of(setdiff(hhmmss_cols, time_col))) %>%
@@ -78,32 +73,90 @@ clean_time_columns <- function(data, time_col) {
   return(data)
 }
 
-# Filter for physiological bounds including WUEi
+# Function to define and validate critical LICOR columns
+get_licor_columns <- function(data, year) {
+  # Define expected column patterns and their standardized names
+  column_patterns <- list(
+    date = "^date$",
+    treatment = "^Tx$",
+    photosynthesis = "^A$",
+    transpiration = "^E$",
+    conductance = "^gsw$",
+    vpd = "^VPDleaf$",
+    co2 = "^Ci$",
+    stress = "^Stress$",
+    time = "^Time_(id|ID)$",
+    block = "(?i)^Block$",     # Added (?i) for case-insensitive matching
+    row = "(?i)^Row$",         # Added (?i) for case-insensitive matching
+    vine = "(?i)^Vine$",       # Added (?i) for case-insensitive matching
+    vine_id = "(?i)^Vine_id$", # Added (?i) for case-insensitive matching
+    variety = "(?i)^(Var|Variety)$", # Added pattern to match both Var and Variety
+    leaf_temp = "^TleafEB$"
+  )
+  
+  # Initialize list to store matched columns
+  matched_columns <- list()
+  
+  # Find matching columns and validate
+  for (var_name in names(column_patterns)) {
+    matching_cols <- grep(column_patterns[[var_name]], names(data), value = TRUE)
+    
+    if (length(matching_cols) == 0) {
+      if (var_name %in% c("date", "treatment", "photosynthesis", "transpiration", 
+                          "conductance", "vpd", "co2", "variety")) {
+        stop(sprintf("Critical column matching pattern '%s' not found in %d data", 
+                     column_patterns[[var_name]], year))
+      }
+      message(sprintf("Optional column matching pattern '%s' not found in %d data", 
+                      column_patterns[[var_name]], year))
+      next
+    }
+    
+    if (length(matching_cols) > 1) {
+      warning(sprintf("Multiple columns match pattern '%s' in %d data: %s\nUsing first match: %s", 
+                      column_patterns[[var_name]], year,
+                      paste(matching_cols, collapse = ", "),
+                      matching_cols[1]))
+    }
+    
+    matched_columns[[var_name]] <- matching_cols[1]
+  }
+  
+  # Return named vector of column mappings
+  return(setNames(unlist(matched_columns), names(matched_columns)))
+}
+
+# Function to filter data based on physiological bounds
 filter_physiological_bounds <- function(data) {
   bounds <- list(
-    A = c(-5, 30),     # Photosynthesis
-    E = c(0, 0.02),    # Transpiration
-    gsw = c(0, 1),     # Stomatal conductance
-    VPDleaf = c(0, 10) # Vapor pressure deficit
+    photosynthesis = c(-5, 30),
+    transpiration = c(0, 0.02),
+    conductance = c(0, 1),
+    vpd = c(0, 10),
+    leaf_temp = c(0, 50)
   )
   
   filtered_data <- data %>%
     filter(
-      between(A, bounds$A[1], bounds$A[2]) | is.na(A),
-      between(E, bounds$E[1], bounds$E[2]) | is.na(E),
-      between(gsw, bounds$gsw[1], bounds$gsw[2]) | is.na(gsw),
-      between(VPDleaf, bounds$VPDleaf[1], bounds$VPDleaf[2]) | is.na(VPDleaf),
-      WUEi > 0 | is.na(WUEi)  # Ensure WUEi values are positive
+      between(photosynthesis, bounds$photosynthesis[1], bounds$photosynthesis[2]) | 
+        is.na(photosynthesis),
+      between(transpiration, bounds$transpiration[1], bounds$transpiration[2]) | 
+        is.na(transpiration),
+      between(conductance, bounds$conductance[1], bounds$conductance[2]) | 
+        is.na(conductance),
+      between(vpd, bounds$vpd[1], bounds$vpd[2]) | 
+        is.na(vpd),
+      WUEi > 0 | is.na(WUEi)
     )
   
   rows_filtered <- nrow(data) - nrow(filtered_data)
   if (rows_filtered > 0) {
-    message(paste("Filtered out", rows_filtered, "rows with values outside physiological bounds"))
+    message(sprintf("Filtered out %d rows with values outside physiological bounds", 
+                    rows_filtered))
   }
   
   return(filtered_data)
 }
-
 
 # Helper function to validate processed data
 validate_processed_data <- function(data) {
@@ -114,7 +167,7 @@ validate_processed_data <- function(data) {
   
   # Check if required columns exist
   required_cols <- c("date", "year", "treatment", "stress_level", "measurement_period", 
-                     "A", "E", "gsw", "VPDleaf", "Ci")
+                     "photosynthesis", "transpiration", "conductance", "vpd", "co2")
   
   missing_cols <- setdiff(required_cols, names(data))
   if (length(missing_cols) > 0) {
@@ -154,14 +207,6 @@ validate_processed_data <- function(data) {
                ". Expected 2022-2023"))
   }
   
-  # Validate numeric columns are actually numeric
-  numeric_cols <- c("A", "E", "gsw", "VPDleaf", "Ci")
-  for (col in numeric_cols) {
-    if (!is.numeric(data[[col]])) {
-      stop(paste("Column", col, "must be numeric"))
-    }
-  }
-  
   # Print validation summary
   message("\nData validation summary:")
   message("------------------------")
@@ -178,110 +223,100 @@ validate_processed_data <- function(data) {
   return(TRUE)
 }
 
+# Main function to process LICOR data
 process_licor_data <- function(data, year) {
-  # Print column names to aid in extraction
-  message("Column names for year ", year, ":")
-  print(colnames(data))
+  # Get validated column mappings
+  cols <- get_licor_columns(data, year)
   
-  # Define columns to retain (with variations)
-  columns_to_keep <- c("date", "Tx", "A", "E", "gsw", "VPDleaf", "Ci", "Stress",
-                       "Block", "Row", "Vine", "Vine_id", "Time_id", "Time_ID")
+  # Print column mapping for debugging
+  message("\nColumn mapping for year ", year, ":")
+  print(cols)
   
-  # Extract relevant columns (ignore others like Fv/Fm)
-  selected_columns <- intersect(columns_to_keep, colnames(data))
-  filtered_data <- data[, selected_columns, drop = FALSE]
+  # Select only the matched columns
+  filtered_data <- data[, cols, drop = FALSE]
   
+  # Standardize column names
+  names(filtered_data) <- names(cols)
   
-  message("Columns retained for processing: ", paste(colnames(data), collapse=", "))
-  
-  # Identify time column (accounting for variations)
-  time_col <- intersect(c("Time_id", "Time_ID"), colnames(data))[1]
-  if (is.null(time_col)) {
-    stop("No time_id column found for year ", year)
-  }
-  message("Using time column: ", time_col)
-  
-  # Helper function to handle different date formats
-  convert_date <- function(date_str, year) {
-    if(year == 2022) {
-      as.Date(date_str, format = "%m/%d/%y")
-    } else {
-      as.Date(substr(date_str, 1, 8), format = "%Y%m%d")
-    }
-  }
-  
-  # Process data
-  processed_data <- data %>%
+  # Process data with standardized column names
+  processed_data <- filtered_data %>%
     mutate(
-      Tx = if(year == 2022) {
-        if_else(is.nan(Tx), "Base", as.character(Tx))
+      treatment = case_when(
+        year == 2022 & treatment == "Base" ~ "4L (Pre-treatment)",
+        year == 2022 & treatment == "4" ~ "4L",
+        year == 2022 & treatment == "2" ~ "2L",
+        year == 2023 & treatment == "4L" ~ "4L",
+        year == 2023 & treatment == "2L" ~ "2L",
+        TRUE ~ NA_character_
+      ),
+      # Add variety standardization
+      variety = case_when(
+        toupper(variety) %in% c("CH", "CHARDONNAY") ~ "CH",
+        toupper(variety) %in% c("CS", "CAB", "CABERNET", "CABERNET SAUVIGNON") ~ "CS",
+        TRUE ~ NA_character_
+      ),
+      # Convert date if needed
+      date = if(year == 2022) {
+        as.Date(date, format = "%m/%d/%y")
       } else {
-        as.character(Tx)
+        as.Date(substr(date, 1, 8), format = "%Y%m%d")
       },
-      date = convert_date(date, year),
+      
+      # Ensure consistent data types for block, row, vine
+      block = as.character(block),  # Convert to character
+      row = as.character(row),      # Convert to character
+      vine = as.character(vine),    # Convert to character
+      
       year = year,
       
       # Calculate WUEi (Intrinsic Water Use Efficiency)
-      WUEi = A / gsw,
+      WUEi = photosynthesis / conductance,
       
-      # Standardize measurement periods based on time column
+      # Standardize measurement periods
       measurement_period = case_when(
-        toupper(get(time_col)) %in% c("PREDAWN", "PRE-DAWN", "PRE_DAWN") ~ "Pre-dawn",
-        toupper(get(time_col)) %in% c("MIDDAY", "MID-DAY", "MID_DAY") ~ "Midday",
-        TRUE ~ "Heatwave"
+        toupper(time) %in% c("PREDAWN", "PRE-DAWN", "PRE_DAWN") ~ "Pre-dawn",
+        toupper(time) %in% c("MIDDAY", "MID-DAY", "MID_DAY") ~ "Midday",
+        TRUE ~ "Other"
       ),
       
       # Standardize stress levels
       stress_level = case_when(
-        tolower(Stress) == "s" ~ "Stressed",
-        tolower(Stress) == "ns" ~ "Not Stressed",
-        TRUE ~ "Normal"
-      ),
-      
-      # Treatment mapping logic
-      treatment = case_when(
-        year == 2022 & Tx == "Base" ~ "Baseline (1x4L)",
-        year == 2022 & Tx == "4" ~ "Double 4L",
-        year == 2022 & Tx == "2" ~ "Double 2L",
-        year == 2023 & Tx == "4L" ~ "Double 4L",
-        year == 2023 & Tx == "2L" ~ "Double 2L",
-        TRUE ~ NA_character_
+        tolower(stress) == "s" ~ "Stressed",
+        tolower(stress) == "ns" ~ "Not Stressed",
+        TRUE ~ "Normal Schedule"
       )
     ) %>%
     filter(!is.na(treatment)) %>%
     filter_physiological_bounds()
   
-  # Add diagnostic message for after processing
-  message("After processing for year ", year, ":")
-  message("Treatment values: ", paste(unique(processed_data$treatment), collapse=", "))
-  message("Number of rows per treatment:")
+  # Add diagnostic message for processed data
+  message("\nProcessing summary for year ", year, ":")
+  message("Treatment counts:")
   print(table(processed_data$treatment))
-  message("Number of rows by stress level:")
+  message("\nVariety counts:")
+  print(table(processed_data$variety))
+  message("\nStress level counts:")
   print(table(processed_data$stress_level))
-  message("Number of rows by measurement period:")
+  message("\nMeasurement period counts:")
   print(table(processed_data$measurement_period))
-  message("Total rows: ", nrow(processed_data))
+  message("\nTotal rows: ", nrow(processed_data))
+  
+  # Validate final processed data
+  validate_processed_data(processed_data)
   
   return(processed_data)
 }
 
+#------------------------------------------------------------------------------
+# Part 2: CIMIS Data Processing Functions
+#------------------------------------------------------------------------------
 
-# Update filter_physiological_bounds function
-filter_physiological_bounds <- function(data) {
-  data %>%
-    filter(
-      between(A, -5, 30) | is.na(A),           # Net photosynthesis bounds
-      between(E, 0, 0.02) | is.na(E),          # Transpiration bounds
-      between(gsw, 0, 1) | is.na(gsw),         # Stomatal conductance bounds
-      (WUEi > 0 | is.na(WUEi)),                # WUEi bounds
-      between(TleafEB, 0, 50) | is.na(TleafEB), # Leaf temperature bounds (°C)
-      (Ci > 0 | is.na(Ci)),                    # Intercellular CO2 bounds
-      (Pci > 0 | is.na(Pci))                   # Partial pressure CO2 bounds
-    )
-}
 # Function to process CIMIS data
 process_cimis_data <- function(data, year) {
-  # Define required columns
+  # Print column names at the start of processing
+  log_message("CIMIS data columns:")
+  log_message(paste(names(data), collapse=", "))
+  
   required_cols <- c("Date", "ETo (in)", "Precip (in)", "Sol Rad (Ly/day)", 
                      "Avg Vap Pres (mBars)", "Max Air Temp (F)", "Min Air Temp (F)",
                      "Avg Air Temp (F)", "Avg Rel Hum (%)", "Avg Wind Speed (mph)")
@@ -309,8 +344,10 @@ process_cimis_data <- function(data, year) {
         RH = "Avg Rel Hum (%)",
         wind = "Avg Wind Speed (mph)"
       ) %>%
-      # Add year and convert units
+      # Convert date string to Date type and add conversions
       dplyr::mutate(
+        # Convert date to proper Date type
+        date = as.Date(date, format = "%m/%d/%Y"),
         year = year,
         # Convert temperatures from F to C
         tmax = (tmax - 32) * 5/9,
@@ -328,6 +365,9 @@ process_cimis_data <- function(data, year) {
   }, error = function(e) {
     stop(paste("Error processing CIMIS data for year", year, ":", e$message))
   })
+  
+  # Add diagnostic output for date type
+  log_message(paste("Date column class after processing:", class(processed_data$date)[1]))
   
   # Validate processed data
   validate_cimis_data(processed_data)

@@ -1,4 +1,13 @@
 # 2_data_loading.R
+
+# Define default paths to match your pre-loaded dataframe names exactly as they appear in the environment
+default_paths <- list(
+  licor_2022 = "licor_comb_2022_final",  # maps to the actual name of your pre-loaded dataframe
+  licor_2023 = "X2023_comb_Licor", 
+  cimis_2022 = "CIMIS_growing_season_2022",
+  cimis_2023 = "CIMIS_2023"
+)
+
 # Function to load all required data files (use pre-loaded dataframes)
 load_data <- function(paths = default_paths) {
   message("Using pre-loaded dataframes...")

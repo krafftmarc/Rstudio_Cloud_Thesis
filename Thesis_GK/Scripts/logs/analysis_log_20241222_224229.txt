@@ -1,0 +1,6 @@
+[2024-12-22 22:42:35] Checking R environment...
+[2024-12-22 22:42:35] R version: 4.4.2
+[2024-12-22 22:42:35] Sourcing required scripts...
+[2024-12-22 22:42:39] ERROR loading 1_packages_setup.R : there is no package called ‘gridExtra’
+[2024-12-22 22:42:39] ERROR in analysis: Failed to load 1_packages_setup.R
+[2024-12-22 22:42:39] Analysis failed. Check log file for details.

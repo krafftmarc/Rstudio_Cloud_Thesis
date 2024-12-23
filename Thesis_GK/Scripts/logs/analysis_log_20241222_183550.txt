@@ -1,0 +1,102 @@
+[2024-12-22 18:36:03] Checking R environment...
+[2024-12-22 18:36:03] R version: 4.4.2
+[2024-12-22 18:36:03] Sourcing required scripts...
+[2024-12-22 18:36:03] Successfully loaded: 1_packages_setup.R
+[2024-12-22 18:36:03] Successfully loaded: 2_data_loading.R
+[2024-12-22 18:36:03] Successfully loaded: 3_data_processing.R
+[2024-12-22 18:36:03] Successfully loaded: 4_statistical_analysis.R
+[2024-12-22 18:36:03] Successfully loaded: 5_visualization.R
+[2024-12-22 18:36:03] Successfully loaded: 6_export_functions.R
+[2024-12-22 18:36:03] Validating pre-loaded dataframes...
+[2024-12-22 18:36:03] All required dataframes are present.
+[2024-12-22 18:36:03] Starting analysis...
+[2024-12-22 18:36:04] Loading data files...
+[2024-12-22 18:36:04] Checking data quality...
+[2024-12-22 18:36:04] Checking data quality...
+[2024-12-22 18:36:04] Data quality checks completed
+[2024-12-22 18:36:04] 
+Processing LICOR data...
+[2024-12-22 18:36:04] Checking combined data structure:
+[2024-12-22 18:36:04] Treatment levels: 4L, 2L
+[2024-12-22 18:36:04] Years: 2022, 2023
+[2024-12-22 18:36:04] Number of rows by treatment and year:
+[2024-12-22 18:36:04] 
+Processing CIMIS data...
+[2024-12-22 18:36:04] 
+Calculating basic statistics...
+[2024-12-22 18:36:04] 
+Fitting mixed models...
+[2024-12-22 18:36:04] 
+Initial Data Diagnostics:
+[2024-12-22 18:36:04] ----------------------
+[2024-12-22 18:36:04] Total rows: 536
+[2024-12-22 18:36:04] 
+Missing values by column:
+[2024-12-22 18:36:04] 
+After scaling - Missing values in scaled variables:
+[2024-12-22 18:36:04] 
+Model Structure Diagnostics:
+[2024-12-22 18:36:04] ---------------------------
+[2024-12-22 18:36:04] Treatment levels: 4L (Pre-treatment), 2L, 4L
+[2024-12-22 18:36:04] Year levels: 2022, 2023
+[2024-12-22 18:36:04] 
+Treatment x Year combinations:
+[2024-12-22 18:36:04] 
+Complete cases analysis:
+[2024-12-22 18:36:04] Total complete cases: 536
+[2024-12-22 18:36:04] Missing cases: 0
+[2024-12-22 18:36:04] 
+Sample sizes by treatment and year in model data:
+[2024-12-22 18:36:04] 
+Fitting models...
+[2024-12-22 18:36:05] 
+Model Summaries:
+[2024-12-22 18:36:05] --------------
+[2024-12-22 18:36:05] 
+Variable: photosynthesis
+[2024-12-22 18:36:05] Fixed effects:
+[2024-12-22 18:36:05] 
+Estimated Marginal Means:
+[2024-12-22 18:36:05] 
+Pairwise Comparisons:
+[2024-12-22 18:36:05] 
+Variable: transpiration
+[2024-12-22 18:36:05] Fixed effects:
+[2024-12-22 18:36:05] 
+Estimated Marginal Means:
+[2024-12-22 18:36:05] 
+Pairwise Comparisons:
+[2024-12-22 18:36:05] 
+Variable: conductance
+[2024-12-22 18:36:05] Fixed effects:
+[2024-12-22 18:36:05] 
+Estimated Marginal Means:
+[2024-12-22 18:36:05] 
+Pairwise Comparisons:
+[2024-12-22 18:36:05] Mixed models completed successfully
+[2024-12-22 18:36:05] Model components: photosynthesis, transpiration, conductance
+[2024-12-22 18:36:05] 
+Analyzing VPD response...
+[2024-12-22 18:36:05] Beginning VPD response analysis...
+[2024-12-22 18:36:05] Data scaling completed
+[2024-12-22 18:36:05] Checking scaled variables:
+[2024-12-22 18:36:05] vpd_leaf_scaled range: -1.596 to 3.651
+[2024-12-22 18:36:05] transpiration_scaled range: -2.211 to 3.597
+[2024-12-22 18:36:05] photosynthesis_scaled range: -2.499 to 2.112
+[2024-12-22 18:36:05] conductance_scaled range: -2.18 to 3.49
+[2024-12-22 18:36:05] Fitting VPD response models...
+[2024-12-22 18:36:05] Fitting photosynthesis VPD response model...
+[2024-12-22 18:36:05] Fitting conductance VPD response model...
+[2024-12-22 18:36:05] Fitting transpiration VPD response model...
+[2024-12-22 18:36:05] Calculating VPD model results...
+[2024-12-22 18:36:05] Processing photosynthesis results...
+[2024-12-22 18:36:06] Processing conductance results...
+[2024-12-22 18:36:06] Processing transpiration results...
+[2024-12-22 18:36:07] VPD analysis completed successfully
+[2024-12-22 18:36:07] VPD analysis completed successfully
+[2024-12-22 18:36:07] Analysis components: models, results, data
+[2024-12-22 18:36:07] 
+Creating visualization plots...
+[2024-12-22 18:36:07] WARNING: `aes_string()` was deprecated in ggplot2 3.0.0.
+[2024-12-22 18:36:07] WARNING: Please use tidy evaluation idioms with `aes()`. 
+[2024-12-22 18:36:07] WARNING: See also `vignette("ggplot2-in-packages")` for more information.

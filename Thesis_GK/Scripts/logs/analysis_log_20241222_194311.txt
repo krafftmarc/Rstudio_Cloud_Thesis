@@ -1,0 +1,6 @@
+[2024-12-22 19:43:14] Checking R environment...
+[2024-12-22 19:43:14] R version: 4.4.2
+[2024-12-22 19:43:14] Sourcing required scripts...
+[2024-12-22 19:43:15] ERROR loading 1_packages_setup.R : Please install required packages before running the analysis
+[2024-12-22 19:43:15] ERROR in analysis: Failed to load 1_packages_setup.R
+[2024-12-22 19:43:15] Analysis failed. Check log file for details.

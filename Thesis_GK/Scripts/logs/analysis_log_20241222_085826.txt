@@ -1,0 +1,88 @@
+[2024-12-22 08:58:26] Checking R environment...
+[2024-12-22 08:58:26] R version: 4.4.2
+[2024-12-22 08:58:26] Sourcing required scripts...
+[2024-12-22 08:58:27] Successfully loaded: 1_packages_setup.R
+[2024-12-22 08:58:27] Successfully loaded: 2_data_loading.R
+[2024-12-22 08:58:27] Successfully loaded: 3_data_processing.R
+[2024-12-22 08:58:27] Successfully loaded: 4_statistical_analysis.R
+[2024-12-22 08:58:27] Successfully loaded: 5_visualization.R
+[2024-12-22 08:58:27] Successfully loaded: 6_export_functions.R
+[2024-12-22 08:58:27] Validating pre-loaded dataframes...
+[2024-12-22 08:58:27] All required dataframes are present.
+[2024-12-22 08:58:27] Starting analysis...
+[2024-12-22 08:58:27] Loading data files...
+[2024-12-22 08:58:27] Checking data quality...
+[2024-12-22 08:58:27] Checking data quality...
+[2024-12-22 08:58:27] Data quality checks completed
+[2024-12-22 08:58:27] Checking combined data structure:
+[2024-12-22 08:58:27] Treatment levels: 4L, 2L
+[2024-12-22 08:58:27] Years: 2022, 2023
+[2024-12-22 08:58:27] Number of rows by treatment and year:
+[2024-12-22 08:58:28] 
+Initial Data Diagnostics:
+[2024-12-22 08:58:28] ----------------------
+[2024-12-22 08:58:28] Total rows: 536
+[2024-12-22 08:58:28] 
+Missing values by column:
+[2024-12-22 08:58:28] 
+After scaling - Missing values in scaled variables:
+[2024-12-22 08:58:28] 
+Model Structure Diagnostics:
+[2024-12-22 08:58:28] ---------------------------
+[2024-12-22 08:58:28] Treatment levels: 4L (Pre-treatment), 2L, 4L
+[2024-12-22 08:58:28] Year levels: 2022, 2023
+[2024-12-22 08:58:28] 
+Treatment x Year combinations:
+[2024-12-22 08:58:28] 
+Complete cases analysis:
+[2024-12-22 08:58:28] Total complete cases: 536
+[2024-12-22 08:58:28] Missing cases: 0
+[2024-12-22 08:58:28] 
+Sample sizes by treatment and year in model data:
+[2024-12-22 08:58:28] 
+Fitting models...
+[2024-12-22 08:58:28] WARNING: additional arguments ignored: ‘ddf’
+[2024-12-22 08:58:33] Checking R environment...
+[2024-12-22 08:58:33] R version: 4.4.2
+[2024-12-22 08:58:33] Sourcing required scripts...
+[2024-12-22 08:58:33] Successfully loaded: 1_packages_setup.R
+[2024-12-22 08:58:33] Successfully loaded: 2_data_loading.R
+[2024-12-22 08:58:33] Successfully loaded: 3_data_processing.R
+[2024-12-22 08:58:33] Successfully loaded: 4_statistical_analysis.R
+[2024-12-22 08:58:33] Successfully loaded: 5_visualization.R
+[2024-12-22 08:58:33] Successfully loaded: 6_export_functions.R
+[2024-12-22 08:58:33] Validating pre-loaded dataframes...
+[2024-12-22 08:58:33] All required dataframes are present.
+[2024-12-22 08:58:33] Starting analysis...
+[2024-12-22 08:58:33] Loading data files...
+[2024-12-22 08:58:33] Checking data quality...
+[2024-12-22 08:58:33] Checking data quality...
+[2024-12-22 08:58:33] Data quality checks completed
+[2024-12-22 08:58:33] Checking combined data structure:
+[2024-12-22 08:58:33] Treatment levels: 4L, 2L
+[2024-12-22 08:58:33] Years: 2022, 2023
+[2024-12-22 08:58:33] Number of rows by treatment and year:
+[2024-12-22 08:58:34] 
+Initial Data Diagnostics:
+[2024-12-22 08:58:34] ----------------------
+[2024-12-22 08:58:34] Total rows: 536
+[2024-12-22 08:58:34] 
+Missing values by column:
+[2024-12-22 08:58:34] 
+After scaling - Missing values in scaled variables:
+[2024-12-22 08:58:34] 
+Model Structure Diagnostics:
+[2024-12-22 08:58:34] ---------------------------
+[2024-12-22 08:58:34] Treatment levels: 4L (Pre-treatment), 2L, 4L
+[2024-12-22 08:58:34] Year levels: 2022, 2023
+[2024-12-22 08:58:34] 
+Treatment x Year combinations:
+[2024-12-22 08:58:34] 
+Complete cases analysis:
+[2024-12-22 08:58:34] Total complete cases: 536
+[2024-12-22 08:58:34] Missing cases: 0
+[2024-12-22 08:58:34] 
+Sample sizes by treatment and year in model data:
+[2024-12-22 08:58:34] 
+Fitting models...
+[2024-12-22 08:58:34] WARNING: additional arguments ignored: ‘ddf’

@@ -1,0 +1,17 @@
+[2024-12-22 07:35:23] Checking R environment...
+[2024-12-22 07:35:23] R version: 4.4.2
+[2024-12-22 07:35:23] Sourcing required scripts...
+[2024-12-22 07:35:23] Successfully loaded: 1_packages_setup.R
+[2024-12-22 07:35:23] Successfully loaded: 2_data_loading.R
+[2024-12-22 07:35:23] Successfully loaded: 3_data_processing.R
+[2024-12-22 07:35:23] Successfully loaded: data_quality_checks.R
+[2024-12-22 07:35:23] Successfully loaded: validation_utils.R
+[2024-12-22 07:35:23] Successfully loaded: 4_statistical_analysis.R
+[2024-12-22 07:35:23] Successfully loaded: 5_visualization.R
+[2024-12-22 07:35:23] Successfully loaded: 6_export_functions.R
+[2024-12-22 07:35:23] Successfully loaded: 7_main_analysis.R
+[2024-12-22 07:35:23] Validating pre-loaded dataframes...
+[2024-12-22 07:35:23] All required dataframes are present.
+[2024-12-22 07:35:23] Starting analysis...
+[2024-12-22 07:35:23] ERROR in analysis: In argument: `VPDleaf_scaled = if (all(is.na(VPDleaf))) NA else scale(VPDleaf)`.
+[2024-12-22 07:35:23] Analysis failed. Check log file for details.

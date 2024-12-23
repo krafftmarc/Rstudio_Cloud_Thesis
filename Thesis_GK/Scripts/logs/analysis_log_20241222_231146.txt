@@ -1,0 +1,100 @@
+[2024-12-22 23:11:53] Checking R environment...
+[2024-12-22 23:11:53] R version: 4.4.2
+[2024-12-22 23:11:53] Sourcing required scripts...
+[2024-12-22 23:11:53] Successfully loaded: 1_packages_setup.R
+[2024-12-22 23:11:53] Successfully loaded: 2_data_loading.R
+[2024-12-22 23:11:53] Successfully loaded: 3_data_processing.R
+[2024-12-22 23:11:53] Successfully loaded: 4_statistical_analysis.R
+[2024-12-22 23:11:53] Successfully loaded: 5_visualization.R
+[2024-12-22 23:11:53] Successfully loaded: 6_export_functions.R
+[2024-12-22 23:11:53] Validating pre-loaded dataframes...
+[2024-12-22 23:11:53] All required dataframes are present.
+[2024-12-22 23:11:53] Starting analysis...
+[2024-12-22 23:11:53] Loading data files...
+[2024-12-22 23:11:53] Checking data quality...
+[2024-12-22 23:11:53] Checking data quality...
+[2024-12-22 23:11:53] Data quality checks completed
+[2024-12-22 23:11:53] 
+Processing LICOR data...
+[2024-12-22 23:11:54] Checking combined data structure:
+[2024-12-22 23:11:54] Treatment levels: 4L, 2L
+[2024-12-22 23:11:54] Years: 2022, 2023
+[2024-12-22 23:11:54] Number of rows by treatment and year:
+[2024-12-22 23:11:54] 
+Processing CIMIS data...
+[2024-12-22 23:11:54] 
+Calculating basic statistics...
+[2024-12-22 23:11:54] 
+Fitting mixed models...
+[2024-12-22 23:11:54] 
+Initial Data Diagnostics:
+[2024-12-22 23:11:54] ----------------------
+[2024-12-22 23:11:54] Total rows: 536
+[2024-12-22 23:11:54] 
+Missing values by column:
+[2024-12-22 23:11:54] 
+After scaling - Missing values in scaled variables:
+[2024-12-22 23:11:54] 
+Model Structure Diagnostics:
+[2024-12-22 23:11:54] ---------------------------
+[2024-12-22 23:11:54] Treatment levels: 2L, 4L
+[2024-12-22 23:11:54] Year levels: 2022, 2023
+[2024-12-22 23:11:54] 
+Model Summaries:
+[2024-12-22 23:11:54] --------------
+[2024-12-22 23:11:54] 
+Variable: photosynthesis
+[2024-12-22 23:11:54] Type III ANOVA:
+[2024-12-22 23:11:54] 
+Estimated Marginal Means:
+[2024-12-22 23:11:54] 
+Variable: transpiration
+[2024-12-22 23:11:54] Type III ANOVA:
+[2024-12-22 23:11:54] 
+Estimated Marginal Means:
+[2024-12-22 23:11:54] 
+Variable: conductance
+[2024-12-22 23:11:54] Type III ANOVA:
+[2024-12-22 23:11:54] 
+Estimated Marginal Means:
+[2024-12-22 23:11:54] 
+Analyzing VPD response...
+[2024-12-22 23:11:54] Beginning VPD response analysis...
+[2024-12-22 23:11:54] Checking scaled variables:
+[2024-12-22 23:11:54] vpd_leaf_scaled range: -1.596 to 3.651
+[2024-12-22 23:11:54] transpiration_scaled range: -2.211 to 3.597
+[2024-12-22 23:11:54] photosynthesis_scaled range: -2.499 to 2.112
+[2024-12-22 23:11:54] conductance_scaled range: -2.18 to 3.49
+[2024-12-22 23:11:54] 
+Creating visualization plots...
+[2024-12-22 23:11:55] WUEi plot saved successfully
+[2024-12-22 23:11:55] Starting table export...
+[2024-12-22 23:11:55] Created output directory: output_tables
+[2024-12-22 23:11:55] Exporting basic statistics...
+[2024-12-22 23:11:55] Exported: output_tables/basic_stats_2022.csv
+[2024-12-22 23:11:55] Exported: output_tables/basic_stats_2023.csv
+[2024-12-22 23:11:55] Exported: output_tables/basic_stats_combined.csv
+[2024-12-22 23:11:55] Exporting model results...
+[2024-12-22 23:11:55] Processing models: photosynthesis, transpiration, conductance
+[2024-12-22 23:11:55] ERROR exporting EMMs for photosynthesis : $ operator not defined for this S4 class
+[2024-12-22 23:11:55] ERROR exporting pairwise comparisons for photosynthesis : $ operator not defined for this S4 class
+[2024-12-22 23:11:55] Exported: output_tables/anova_photosynthesis.csv
+[2024-12-22 23:11:55] ERROR exporting EMMs for transpiration : $ operator not defined for this S4 class
+[2024-12-22 23:11:55] ERROR exporting pairwise comparisons for transpiration : $ operator not defined for this S4 class
+[2024-12-22 23:11:55] Exported: output_tables/anova_transpiration.csv
+[2024-12-22 23:11:55] ERROR exporting EMMs for conductance : $ operator not defined for this S4 class
+[2024-12-22 23:11:55] ERROR exporting pairwise comparisons for conductance : $ operator not defined for this S4 class
+[2024-12-22 23:11:55] Exported: output_tables/anova_conductance.csv
+[2024-12-22 23:11:55] Table export completed
+[2024-12-22 23:11:55] Starting figure export...
+[2024-12-22 23:11:55] Created output directory: output_figures
+[2024-12-22 23:11:57] Exported: output_figures/treatment_effects.png
+[2024-12-22 23:11:57] ERROR exporting response plots: no applicable method for 'grid.draw' applied to an object of class "list"
+[2024-12-22 23:11:59] Exported: output_figures/annual_comparison.png
+[2024-12-22 23:11:59] Figure export completed
+[2024-12-22 23:11:59] 
+Analysis completed successfully!
+[2024-12-22 23:11:59] Results have been exported to:
+[2024-12-22 23:11:59]   - output_tables/
+[2024-12-22 23:11:59]   - output_figures/
+[2024-12-22 23:11:59] Results object saved to: analysis_results.RData

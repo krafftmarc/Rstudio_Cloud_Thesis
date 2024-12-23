@@ -1,0 +1,14 @@
+[2024-12-22 07:56:09] Checking R environment...
+[2024-12-22 07:56:09] R version: 4.4.2
+[2024-12-22 07:56:09] Sourcing required scripts...
+[2024-12-22 07:56:09] Successfully loaded: 1_packages_setup.R
+[2024-12-22 07:56:09] Successfully loaded: 2_data_loading.R
+[2024-12-22 07:56:09] Successfully loaded: 3_data_processing.R
+[2024-12-22 07:56:09] Successfully loaded: data_quality_checks.R
+[2024-12-22 07:56:09] Successfully loaded: validation_utils.R
+[2024-12-22 07:56:09] ERROR loading 4_statistical_analysis.R : 4_statistical_analysis.R:221:1: unexpected '}'
+220:   ))
+221: }
+     ^
+[2024-12-22 07:56:09] ERROR in analysis: Failed to load 4_statistical_analysis.R
+[2024-12-22 07:56:09] Analysis failed. Check log file for details.

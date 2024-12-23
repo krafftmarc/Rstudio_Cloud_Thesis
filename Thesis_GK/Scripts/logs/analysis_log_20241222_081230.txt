@@ -1,0 +1,3 @@
+[2024-12-22 08:12:30] ERROR loading 7_main_analysis.R : could not find function "run_analysis"
+[2024-12-22 08:12:30] ERROR in analysis: Failed to load 7_main_analysis.R
+[2024-12-22 08:12:30] Analysis failed. Check log file for details.

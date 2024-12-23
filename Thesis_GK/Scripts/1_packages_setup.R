@@ -1,28 +1,30 @@
 # 1_packages_setup.R
-# Script to load required packages and set up the environment
+# Define CRAN mirror first
+options(repos = c(CRAN = "https://cloud.r-project.org"))
 
-# Install required packages if not already installed
+# List of required packages with descriptions
 required_packages <- c(
-  "tidyverse",
-  "lme4",
-  "emmeans",
-  "car",
-  "ggpubr",
-  "lubridate",
-  "readxl"
+  "tidyverse",    # includes dplyr, ggplot2, tidyr, etc.
+  "car",          # for Anova() function
+  "emmeans",      # for estimated marginal means
+  "patchwork",    # for combining plots
+  "lubridate",    # for date handling
+  "magrittr"      # for pipe operator
 )
 
-# Function to install missing packages
-install_missing_packages <- function(packages) {
-  new_packages <- packages[!(packages %in% installed.packages()[,"Package"])]
-  if(length(new_packages)) install.packages(new_packages)
+# Function to check if packages are available
+check_packages <- function(packages) {
+  missing_pkgs <- packages[!sapply(packages, requireNamespace, quietly = TRUE)]
+  return(missing_pkgs)
 }
 
-# Install any missing packages
-install_missing_packages(required_packages)
+# Check which packages need to be installed
+missing_packages <- check_packages(required_packages)
+if(length(missing_packages) > 0) {
+  install.packages(missing_packages)
+}
 
 # Load all required packages
-invisible(lapply(required_packages, library, character.only = TRUE))
-
-# Set default theme for ggplot
-theme_set(theme_bw())
+for(pkg in required_packages) {
+  library(pkg, character.only = TRUE)
+}

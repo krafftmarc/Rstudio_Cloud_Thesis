@@ -1,0 +1,46 @@
+[2024-12-22 20:14:32] Checking R environment...
+[2024-12-22 20:14:32] R version: 4.4.2
+[2024-12-22 20:14:32] Sourcing required scripts...
+[2024-12-22 20:14:32] Successfully loaded: 1_packages_setup.R
+[2024-12-22 20:14:32] Successfully loaded: 2_data_loading.R
+[2024-12-22 20:14:32] Successfully loaded: 3_data_processing.R
+[2024-12-22 20:14:32] Successfully loaded: 4_statistical_analysis.R
+[2024-12-22 20:14:32] Successfully loaded: 5_visualization.R
+[2024-12-22 20:14:32] Successfully loaded: 6_export_functions.R
+[2024-12-22 20:14:32] Validating pre-loaded dataframes...
+[2024-12-22 20:14:32] All required dataframes are present.
+[2024-12-22 20:14:32] Starting analysis...
+[2024-12-22 20:14:32] Loading data files...
+[2024-12-22 20:14:32] Checking data quality...
+[2024-12-22 20:14:32] Checking data quality...
+[2024-12-22 20:14:32] Data quality checks completed
+[2024-12-22 20:14:32] 
+Processing LICOR data...
+[2024-12-22 20:14:32] Checking combined data structure:
+[2024-12-22 20:14:32] Treatment levels: 4L, 2L
+[2024-12-22 20:14:32] Years: 2022, 2023
+[2024-12-22 20:14:32] Number of rows by treatment and year:
+[2024-12-22 20:14:32] 
+Processing CIMIS data...
+[2024-12-22 20:14:32] 
+Calculating basic statistics...
+[2024-12-22 20:14:32] 
+Fitting mixed models...
+[2024-12-22 20:14:32] 
+Initial Data Diagnostics:
+[2024-12-22 20:14:32] ----------------------
+[2024-12-22 20:14:32] Total rows: 536
+[2024-12-22 20:14:32] 
+Missing values by column:
+[2024-12-22 20:14:32] 
+After scaling - Missing values in scaled variables:
+[2024-12-22 20:14:32] 
+Model Structure Diagnostics:
+[2024-12-22 20:14:32] ---------------------------
+[2024-12-22 20:14:32] Treatment levels: 2L, 4L
+[2024-12-22 20:14:32] Year levels: 2022, 2023
+[2024-12-22 20:14:32] Error fitting photosynthesis model: could not find function "emmeans"
+[2024-12-22 20:14:32] Error fitting transpiration model: could not find function "emmeans"
+[2024-12-22 20:14:32] Error fitting conductance model: could not find function "emmeans"
+[2024-12-22 20:14:32] ERROR in analysis: No models could be fitted successfully
+[2024-12-22 20:14:32] Analysis failed. Check log file for details.

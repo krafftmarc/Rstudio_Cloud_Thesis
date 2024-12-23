@@ -1,0 +1,2 @@
+[2024-12-22 07:41:29] ERROR in analysis: could not find function "check_environment"
+[2024-12-22 07:41:29] Analysis failed. Check log file for details.

@@ -1,0 +1,14 @@
+[2024-12-22 08:08:18] Checking R environment...
+[2024-12-22 08:08:18] R version: 4.4.2
+[2024-12-22 08:08:18] Sourcing required scripts...
+[2024-12-22 08:08:18] Successfully loaded: 1_packages_setup.R
+[2024-12-22 08:08:18] Successfully loaded: 2_data_loading.R
+[2024-12-22 08:08:18] Successfully loaded: 3_data_processing.R
+[2024-12-22 08:08:18] Successfully loaded: data_quality_checks.R
+[2024-12-22 08:08:18] Successfully loaded: validation_utils.R
+[2024-12-22 08:08:18] Successfully loaded: 4_statistical_analysis.R
+[2024-12-22 08:08:18] Successfully loaded: 5_visualization.R
+[2024-12-22 08:08:18] Successfully loaded: 6_export_functions.R
+[2024-12-22 08:08:18] ERROR loading 7_main_analysis.R : could not find function "initialize_logging"
+[2024-12-22 08:08:18] ERROR in analysis: Failed to load 7_main_analysis.R
+[2024-12-22 08:08:18] Analysis failed. Check log file for details.

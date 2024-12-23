@@ -1,0 +1,85 @@
+[2024-12-22 18:23:05] Checking R environment...
+[2024-12-22 18:23:05] R version: 4.4.2
+[2024-12-22 18:23:05] Sourcing required scripts...
+[2024-12-22 18:23:05] Successfully loaded: 1_packages_setup.R
+[2024-12-22 18:23:05] Successfully loaded: 2_data_loading.R
+[2024-12-22 18:23:05] Successfully loaded: 3_data_processing.R
+[2024-12-22 18:23:05] Successfully loaded: 4_statistical_analysis.R
+[2024-12-22 18:23:05] Successfully loaded: 5_visualization.R
+[2024-12-22 18:23:05] Successfully loaded: 6_export_functions.R
+[2024-12-22 18:23:05] Validating pre-loaded dataframes...
+[2024-12-22 18:23:05] All required dataframes are present.
+[2024-12-22 18:23:05] Starting analysis...
+[2024-12-22 18:23:05] Loading data files...
+[2024-12-22 18:23:05] Checking data quality...
+[2024-12-22 18:23:05] Checking data quality...
+[2024-12-22 18:23:05] Data quality checks completed
+[2024-12-22 18:23:05] 
+Processing LICOR data...
+[2024-12-22 18:23:05] Checking combined data structure:
+[2024-12-22 18:23:05] Treatment levels: 4L, 2L
+[2024-12-22 18:23:05] Years: 2022, 2023
+[2024-12-22 18:23:05] Number of rows by treatment and year:
+[2024-12-22 18:23:05] 
+Processing CIMIS data...
+[2024-12-22 18:23:05] 
+Calculating basic statistics...
+[2024-12-22 18:23:05] 
+Fitting mixed models...
+[2024-12-22 18:23:06] 
+Initial Data Diagnostics:
+[2024-12-22 18:23:06] ----------------------
+[2024-12-22 18:23:06] Total rows: 536
+[2024-12-22 18:23:06] 
+Missing values by column:
+[2024-12-22 18:23:06] 
+After scaling - Missing values in scaled variables:
+[2024-12-22 18:23:06] 
+Model Structure Diagnostics:
+[2024-12-22 18:23:06] ---------------------------
+[2024-12-22 18:23:06] Treatment levels: 4L (Pre-treatment), 2L, 4L
+[2024-12-22 18:23:06] Year levels: 2022, 2023
+[2024-12-22 18:23:06] 
+Treatment x Year combinations:
+[2024-12-22 18:23:06] 
+Complete cases analysis:
+[2024-12-22 18:23:06] Total complete cases: 536
+[2024-12-22 18:23:06] Missing cases: 0
+[2024-12-22 18:23:06] 
+Sample sizes by treatment and year in model data:
+[2024-12-22 18:23:06] 
+Fitting models...
+[2024-12-22 18:23:06] 
+Model Summaries:
+[2024-12-22 18:23:06] --------------
+[2024-12-22 18:23:06] 
+Variable: photosynthesis
+[2024-12-22 18:23:06] Fixed effects:
+[2024-12-22 18:23:06] 
+Estimated Marginal Means:
+[2024-12-22 18:23:06] 
+Pairwise Comparisons:
+[2024-12-22 18:23:06] 
+Variable: transpiration
+[2024-12-22 18:23:06] Fixed effects:
+[2024-12-22 18:23:06] 
+Estimated Marginal Means:
+[2024-12-22 18:23:07] 
+Pairwise Comparisons:
+[2024-12-22 18:23:07] 
+Variable: conductance
+[2024-12-22 18:23:07] Fixed effects:
+[2024-12-22 18:23:07] 
+Estimated Marginal Means:
+[2024-12-22 18:23:07] 
+Pairwise Comparisons:
+[2024-12-22 18:23:07] Mixed models completed successfully
+[2024-12-22 18:23:07] Model components: photosynthesis, transpiration, conductance
+[2024-12-22 18:23:07] 
+Analyzing VPD response...
+[2024-12-22 18:23:07] Beginning VPD response analysis...
+[2024-12-22 18:23:07] Data scaling completed
+[2024-12-22 18:23:07] Checking scaled variables:
+[2024-12-22 18:23:07] VPD range: -1.596 to 3.65
+[2024-12-22 18:23:07] Fitting VPD response models...
+[2024-12-22 18:23:07] WARNING: Some predictor variables are on very different scales: consider rescaling

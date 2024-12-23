@@ -1,4 +1,28 @@
-# validation_utils.R
+# validation_utils.R 
+
+#------------------------------------------------------------------------------
+# Logging Functions
+#------------------------------------------------------------------------------
+
+# Function to initialize logging
+initialize_logging <- function() {
+  log_file_path <- file.path("logs", format(Sys.time(), "analysis_log_%Y%m%d_%H%M%S.txt"))
+  dir.create("logs", showWarnings = FALSE)
+  assign("log_file", log_file_path, envir = .GlobalEnv)  
+  return(log_file_path)
+}
+
+# Function to log messages with timestamps
+log_message <- function(msg, print_console = TRUE) {
+  timestamp <- format(Sys.time(), "[%Y-%m-%d %H:%M:%S]")
+  message <- paste(timestamp, msg)
+  write(message, log_file, append = TRUE)
+  if (print_console) cat(message, "\n")
+}
+
+#------------------------------------------------------------------------------
+# Validation Functions
+#------------------------------------------------------------------------------
 
 # Function to validate paths and data requirements
 validate_paths <- function(paths) {
@@ -69,4 +93,122 @@ validate_ranges <- function(data, range_specs) {
                   paste(unlist(range_violations), collapse = "; ")))
   }
   return(TRUE)
+}
+
+
+# [existing validation functions remain the same...]
+
+# Function to check data quality across all datasets
+check_data_quality <- function(data) {
+  log_message("Checking data quality...")
+  
+  # LICOR data quality checks
+  validate_ranges(data$licor_2022, list(
+    A = c(-50, 50),        # photosynthesis range
+    gsw = c(-1, 2),        # stomatal conductance range
+    VPDleaf = c(0, 10)     # vapor pressure deficit range
+  ))
+  validate_ranges(data$licor_2023, list(
+    A = c(-50, 50),        # photosynthesis range
+    gsw = c(-1, 2),        # stomatal conductance range - made consistent with 2022
+    VPDleaf = c(0, 10)     # vapor pressure deficit range
+  ))
+  
+  # CIMIS data quality checks
+  validate_ranges(data$cimis_2022, list(
+    "Max Air Temp (F)" = c(0, 130),
+    "Avg Vap Pres (mBars)" = c(0, 100)
+  ))
+  validate_ranges(data$cimis_2023, list(
+    "Max Air Temp (F)" = c(0, 130),
+    "Avg Vap Pres (mBars)" = c(0, 100)
+  ))
+  
+  log_message("Data quality checks completed")
+  return(TRUE)
+}
+
+#------------------------------------------------------------------------------
+# Environment Setup Functions
+#------------------------------------------------------------------------------
+
+# Function to check R environment and setup directories
+check_environment <- function() {
+  log_message("Checking R environment...")
+  
+  # Check R version
+  r_version <- getRversion()
+  log_message(paste("R version:", r_version))
+  
+  # Create results directories
+  dirs <- c("output_tables", "output_figures", "logs")
+  sapply(dirs, dir.create, showWarnings = FALSE)
+}
+
+# Source scripts in the correct order, avoiding validation_utils.R
+source_scripts <- function() {
+  required_scripts <- c(
+    "1_packages_setup.R",
+    "2_data_loading.R",
+    "3_data_processing.R",
+    "4_statistical_analysis.R",
+    "5_visualization.R",
+    "6_export_functions.R"
+  )  # Note: main_analysis.R is not included here
+  
+  log_message("Sourcing required scripts...")
+  for (script in required_scripts) {
+    if (file.exists(script)) {
+      tryCatch({
+        source(script)
+        log_message(paste("Successfully loaded:", script))
+      }, error = function(e) {
+        log_message(paste("ERROR loading", script, ":", e$message))
+        stop(paste("Failed to load", script))
+      })
+    } else {
+      log_message(paste("ERROR:", script, "not found"))
+      stop(paste("Missing required script:", script))
+    }
+  }
+}
+#------------------------------------------------------------------------------
+# Analysis Execution Functions
+#------------------------------------------------------------------------------
+
+# Function to initialize and run analysis
+run_analysis <- function(paths = default_paths) {
+  tryCatch({
+    # Initialize environment
+    check_environment()
+    
+    # Source required scripts before running analysis
+    source_scripts()
+    
+    # Validate paths before running analysis
+    validate_paths(paths)
+    
+    # Run the analysis
+    log_message("Starting analysis...")
+    results <- main_analysis(paths)
+    
+    # Print success message
+    log_message("\nAnalysis completed successfully!")
+    log_message("Results have been exported to:")
+    log_message("  - output_tables/")
+    log_message("  - output_figures/")
+    
+    # Save results object
+    save(results, file = "analysis_results.RData")
+    log_message("Results object saved to: analysis_results.RData")
+    
+    return(results)
+    
+  }, error = function(e) {
+    log_message(paste("ERROR in analysis:", e$message))
+    log_message("Analysis failed. Check log file for details.")
+    stop(e)
+  }, warning = function(w) {
+    log_message(paste("WARNING:", w$message))
+  })
 }

@@ -1,0 +1,56 @@
+[2024-12-22 19:54:26] Checking R environment...
+[2024-12-22 19:54:26] R version: 4.4.2
+[2024-12-22 19:54:26] Sourcing required scripts...
+[2024-12-22 19:54:26] Successfully loaded: 1_packages_setup.R
+[2024-12-22 19:54:26] Successfully loaded: 2_data_loading.R
+[2024-12-22 19:54:26] Successfully loaded: 3_data_processing.R
+[2024-12-22 19:54:26] Successfully loaded: 4_statistical_analysis.R
+[2024-12-22 19:54:26] Successfully loaded: 5_visualization.R
+[2024-12-22 19:54:26] Successfully loaded: 6_export_functions.R
+[2024-12-22 19:54:26] Validating pre-loaded dataframes...
+[2024-12-22 19:54:26] All required dataframes are present.
+[2024-12-22 19:54:26] Starting analysis...
+[2024-12-22 19:54:26] Loading data files...
+[2024-12-22 19:54:26] Checking data quality...
+[2024-12-22 19:54:26] Checking data quality...
+[2024-12-22 19:54:26] Data quality checks completed
+[2024-12-22 19:54:26] 
+Processing LICOR data...
+[2024-12-22 19:54:27] Checking combined data structure:
+[2024-12-22 19:54:27] Treatment levels: 4L, 2L
+[2024-12-22 19:54:27] Years: 2022, 2023
+[2024-12-22 19:54:27] Number of rows by treatment and year:
+[2024-12-22 19:54:27] 
+Processing CIMIS data...
+[2024-12-22 19:54:27] 
+Calculating basic statistics...
+[2024-12-22 19:54:27] 
+Fitting mixed models...
+[2024-12-22 19:54:27] 
+Initial Data Diagnostics:
+[2024-12-22 19:54:27] ----------------------
+[2024-12-22 19:54:27] Total rows: 536
+[2024-12-22 19:54:27] 
+Missing values by column:
+[2024-12-22 19:54:27] 
+After scaling - Missing values in scaled variables:
+[2024-12-22 19:54:27] 
+Model Structure Diagnostics:
+[2024-12-22 19:54:27] ---------------------------
+[2024-12-22 19:54:27] Treatment levels: 4L (Pre-treatment), 2L, 4L
+[2024-12-22 19:54:27] Year levels: 2022, 2023
+[2024-12-22 19:54:27] 
+Treatment x Year combinations:
+[2024-12-22 19:54:27] 
+Complete cases analysis:
+[2024-12-22 19:54:27] Total complete cases: 536
+[2024-12-22 19:54:27] Missing cases: 0
+[2024-12-22 19:54:27] 
+Sample sizes by treatment and year in model data:
+[2024-12-22 19:54:27] 
+Fitting models...
+[2024-12-22 19:54:27] Error fitting photosynthesis model: could not find function "lmer"
+[2024-12-22 19:54:27] Error fitting transpiration model: could not find function "lmer"
+[2024-12-22 19:54:27] Error fitting conductance model: could not find function "lmer"
+[2024-12-22 19:54:27] ERROR in analysis: No models could be fitted successfully
+[2024-12-22 19:54:27] Analysis failed. Check log file for details.

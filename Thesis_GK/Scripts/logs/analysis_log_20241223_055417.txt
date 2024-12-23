@@ -1,0 +1,16 @@
+[2024-12-23 05:54:17] Checking R environment...
+[2024-12-23 05:54:17] R version: 4.4.2
+[2024-12-23 05:54:17] Sourcing required scripts...
+[2024-12-23 05:54:17] Successfully loaded: 1_packages_setup.R
+[2024-12-23 05:54:17] Successfully loaded: 2_data_loading.R
+[2024-12-23 05:54:17] Successfully loaded: 3_data_processing.R
+[2024-12-23 05:54:17] Successfully loaded: 4_statistical_analysis.R
+[2024-12-23 05:54:17] Successfully loaded: 5_visualization.R
+[2024-12-23 05:54:17] Successfully loaded: 6_export_functions.R
+[2024-12-23 05:54:17] Validating pre-loaded dataframes...
+[2024-12-23 05:54:17] ERROR: Required dataframe licor_comb_2022_final is missing in the environment.
+[2024-12-23 05:54:17] ERROR: Required dataframe X2023_comb_Licor is missing in the environment.
+[2024-12-23 05:54:17] ERROR: Required dataframe CIMIS_growing_season_2022 is missing in the environment.
+[2024-12-23 05:54:17] ERROR: Required dataframe CIMIS_2023 is missing in the environment.
+[2024-12-23 05:54:17] ERROR in analysis: One or more required dataframes are missing. Check log for details.
+[2024-12-23 05:54:17] Analysis failed. Check log file for details.

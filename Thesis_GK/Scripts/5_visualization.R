@@ -1,120 +1,302 @@
 # 5_visualization.R
 # Functions for creating plots and visualizations
 
-# Function to create treatment effect plots
+#------------------------------------------------------------------------------
+# Helper Functions - ADD THESE NEW FUNCTIONS AT THE TOP
+#------------------------------------------------------------------------------
+
+# Enhanced theme function for consistent plotting
+create_enhanced_theme <- function(base_size = 11) {
+  theme_bw(base_size = base_size) +
+    theme(
+      plot.title = element_text(size = base_size + 1, face = "bold", hjust = 0.5),
+      plot.subtitle = element_text(size = base_size - 1, hjust = 0.5),
+      axis.title = element_text(size = base_size),
+      axis.text = element_text(size = base_size - 1),
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      legend.position = "bottom",
+      legend.title = element_text(size = base_size - 1),
+      legend.text = element_text(size = base_size - 1),
+      strip.background = element_rect(fill = "white", color = "black"),
+      strip.text = element_text(size = base_size - 1),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5)
+    )
+}
+
+# Color palette function
+get_treatment_colors <- function(treatment_levels) {
+  color_map <- c(
+    "2L" = "#1f77b4",  # Blue
+    "4L" = "#2ca02c",  # Green
+    "4L (Pre-treatment)" = "#ff7f0e"  # Orange
+  )
+  return(color_map[treatment_levels])
+}
+
+# Data validation function
+validate_plot_data <- function(data, required_cols) {
+  missing_cols <- setdiff(required_cols, names(data))
+  if (length(missing_cols) > 0) {
+    stop(paste("Missing required columns:", paste(missing_cols, collapse = ", ")))
+  }
+  if (nrow(data) == 0) {
+    stop("Data frame is empty")
+  }
+  na_cols <- sapply(data[required_cols], function(x) all(is.na(x)))
+  if (any(na_cols)) {
+    stop(paste("Columns contain all NA values:", 
+               paste(names(na_cols)[na_cols], collapse = ", ")))
+  }
+  return(TRUE)
+}
+
+# Outlier handling function
+handle_outliers <- function(data, var, bounds) {
+  if (var %in% names(data) && all(c("lower", "upper") %in% names(bounds))) {
+    outliers <- data[[var]] < bounds$lower | data[[var]] > bounds$upper
+    if (any(outliers, na.rm = TRUE)) {
+      warning(sprintf("%d outliers found in %s (%.1f%%)", 
+                      sum(outliers, na.rm = TRUE), 
+                      var, 
+                      100 * mean(outliers, na.rm = TRUE)))
+    }
+    data[[var]][outliers] <- NA
+  }
+  return(data)
+}
+
+
+# Enhanced plot_treatment_effects function
 plot_treatment_effects <- function(data) {
-  # Create individual plots for each response variable
-  plot_physiology <- ggplot(data, aes(x = treatment)) +
-    geom_boxplot(aes(y = photosynthesis, fill = treatment)) +
-    facet_grid(stress_level ~ year) +  # Update faceting once variety is added
-    labs(title = "Net Photosynthesis by Treatment",
-         y = expression(A[net]~"("*mu*"mol m"^-2~"s"^-1*")")) +
-    theme_bw() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  # Print data structure for debugging
+  message("Data structure for plotting:")
+  str(data)
   
-  plot_transpiration <- ggplot(data, aes(x = treatment)) +
-    geom_boxplot(aes(y = transpiration, fill = treatment)) +
-    facet_grid(stress_level ~ year) +
-    labs(title = "Transpiration by Treatment",
-         y = expression(E~"(mmol m"^-2~"s"^-1*")")) +
-    theme_bw() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  # Validate input data with expanded required columns
+  required_cols <- c("treatment", "photosynthesis", "transpiration", "conductance", 
+                     "WUEi", "stress_level", "year", "variety", "leaf_temp")
+  validate_plot_data(data, required_cols)
   
-  plot_conductance <- ggplot(data, aes(x = treatment)) +
-    geom_boxplot(aes(y = conductance, fill = treatment)) +
-    facet_grid(stress_level ~ year) +
-    labs(title = "Stomatal Conductance by Treatment",
-         y = expression(g[sw]~"(mol m"^-2~"s"^-1*")")) +
-    theme_bw() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  # Define physiological bounds
+  bounds <- list(
+    photosynthesis = list(lower = -5, upper = 30),
+    transpiration = list(lower = 0, upper = 0.02),
+    conductance = list(lower = 0, upper = 1),
+    WUEi = list(lower = 0, upper = 200)
+  )
   
-  plot_wuei <- ggplot(data, aes(x = treatment)) +
-    geom_boxplot(aes(y = WUEi, fill = treatment)) +
-    facet_grid(stress_level ~ year) +
-    labs(title = "Water Use Efficiency by Treatment",
-         y = expression(WUE[i]~"("*mu*"mol mol"^-1*")")) +
-    theme_bw() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  # Handle outliers with improved error reporting
+  message("Handling outliers...")
+  tryCatch({
+    data <- lapply(names(bounds), function(var) {
+      handle_outliers(data, var, bounds[[var]])
+    }) %>% bind_rows()
+  }, error = function(e) {
+    stop(paste("Error handling outliers:", e$message))
+  })
   
-  # New leaf temperature vs photosynthesis plot
-  plot_temp_photo <- ggplot(data, aes(x = leaf_temp, y = photosynthesis, color = treatment)) +
-    geom_point(alpha = 0.6) +
-    geom_smooth(method = "lm", se = TRUE) +
-    facet_grid(stress_level ~ year) +
-    labs(title = "Leaf Temperature vs Net Photosynthesis",
-         x = expression("Leaf Temperature ("*degree*"C)"),
-         y = expression(A[net]~"("*mu*"mol m"^-2~"s"^-1*")")) +
-    theme_bw() +
-    theme(legend.position = "bottom")
+  # Set up theme and colors
+  message("Setting up theme and colors...")
+  my_theme <- create_enhanced_theme()
+  treatment_colors <- get_treatment_colors(unique(data$treatment))
+  
+  # Print treatment levels for debugging
+  message("Treatment levels found:")
+  print(unique(data$treatment))
+  
+  # Create individual plots with error handling
+  message("Creating individual plots...")
+  
+  plots <- tryCatch({
+    # Photosynthesis plot
+    plot_physiology <- ggplot(data, aes(x = treatment)) +
+      geom_boxplot(aes(y = photosynthesis, fill = treatment),
+                   outlier.shape = 21, outlier.alpha = 0.5) +
+      scale_fill_manual(values = treatment_colors) +
+      facet_grid(stress_level ~ year + variety) +
+      labs(title = "Net Photosynthesis by Treatment",
+           y = expression(A[net]~"("*mu*"mol m"^-2~"s"^-1*")")) +
+      my_theme
+    
+    # Transpiration plot
+    plot_transpiration <- ggplot(data, aes(x = treatment)) +
+      geom_boxplot(aes(y = transpiration, fill = treatment),
+                   outlier.shape = 21, outlier.alpha = 0.5) +
+      scale_fill_manual(values = treatment_colors) +
+      facet_grid(stress_level ~ year + variety) +
+      labs(title = "Transpiration by Treatment",
+           y = expression(E~"(mmol m"^-2~"s"^-1*")")) +
+      my_theme
+    
+    # Conductance plot
+    plot_conductance <- ggplot(data, aes(x = treatment)) +
+      geom_boxplot(aes(y = conductance, fill = treatment),
+                   outlier.shape = 21, outlier.alpha = 0.5) +
+      scale_fill_manual(values = treatment_colors) +
+      facet_grid(stress_level ~ year + variety) +
+      labs(title = "Stomatal Conductance by Treatment",
+           y = expression(g[sw]~"(mol m"^-2~"s"^-1*")")) +
+      my_theme
+    
+    # WUEi plot
+    plot_wuei <- ggplot(data, aes(x = treatment)) +
+      geom_boxplot(aes(y = WUEi, fill = treatment),
+                   outlier.shape = 21, outlier.alpha = 0.5) +
+      scale_fill_manual(values = treatment_colors) +
+      facet_grid(stress_level ~ year + variety) +
+      labs(title = "Water Use Efficiency by Treatment",
+           y = expression(WUE[i]~"("*mu*"mol mol"^-1*")")) +
+      my_theme
+    
+    message("Creating temperature plots by year...")
+    
+    # Ensure year is properly formatted
+    data$year <- as.factor(data$year)
+    
+    # Separate data by year
+    data_2022 <- subset(data, year == "2022")
+    data_2023 <- subset(data, year == "2023")
+    
+    # Temperature plots
+    plot_temp_photo_2022 <- ggplot(data_2022, 
+                                   aes(x = leaf_temp, y = photosynthesis, color = treatment)) +
+      geom_point(alpha = 0.6) +
+      geom_smooth(method = "loess", span = 0.75, se = TRUE) +
+      scale_color_manual(values = treatment_colors) +
+      facet_grid(stress_level ~ variety) +
+      scale_x_continuous(limits = c(25, 45), breaks = seq(25, 45, by = 5)) +
+      labs(x = expression("Leaf Temperature ("*degree*"C)"),
+           y = expression(A[net]~"("*mu*"mol m"^-2~"s"^-1*")")) +
+      my_theme +
+      ggtitle("2022")
+    
+    plot_temp_photo_2023 <- ggplot(data_2023, 
+                                   aes(x = leaf_temp, y = photosynthesis, color = treatment)) +
+      geom_point(alpha = 0.6) +
+      geom_smooth(method = "loess", span = 0.75, se = TRUE) +
+      scale_color_manual(values = treatment_colors) +
+      facet_grid(stress_level ~ variety) +
+      scale_x_continuous(limits = c(25, 40), breaks = seq(25, 40, by = 5)) +
+      labs(x = expression("Leaf Temperature ("*degree*"C)"),
+           y = expression(A[net]~"("*mu*"mol m"^-2~"s"^-1*")")) +
+      my_theme +
+      ggtitle("2023")
+    
+    list(
+      plot_physiology = plot_physiology,
+      plot_transpiration = plot_transpiration,
+      plot_conductance = plot_conductance,
+      plot_wuei = plot_wuei,
+      plot_temp_2022 = plot_temp_photo_2022,
+      plot_temp_2023 = plot_temp_photo_2023
+    )
+  }, error = function(e) {
+    stop(paste("Error creating plots:", e$message))
+  })
+  
+  message("Combining plots...")
   
   # Combine plots using patchwork
-  combined_plot <- (plot_physiology + plot_transpiration) / 
-    (plot_conductance + plot_wuei) /
-    plot_temp_photo +
+  combined_plot <- (plots$plot_physiology + plots$plot_transpiration) / 
+    (plots$plot_conductance + plots$plot_wuei) /
+    (plots$plot_temp_2022 + plots$plot_temp_2023) +
     plot_annotation(
-      title = "Gas Exchange Parameters by Treatment and Stress Level",
-      theme = theme(plot.title = element_text(hjust = 0.5))
+      title = "Gas Exchange Parameters by Treatment, Variety, and Stress Level",
+      theme = theme(plot.title = element_text(size = 14, face = "bold", hjust = 0.5))
     )
   
-  return(combined_plot)
+  # Return both individual plots and combined plot
+  return(list(
+    combined = combined_plot,
+    individual = plots
+  ))
 }
+
 
 # Fix VPD response plots function
 plot_vpd_response <- function(data) {
-  # Ensure year is a factor
-  data$year <- as.factor(data$year)
+  # Validate input data
+  required_cols <- c("vpd", "photosynthesis", "conductance", "transpiration", 
+                     "treatment", "stress_level", "year")
+  validate_plot_data(data, required_cols)
   
-  # Helper function to calculate R2 and p-value for each subplot
-  get_model_stats <- function(data, x_var, y_var) {
-    model <- lm(as.formula(paste(y_var, "~", x_var, "* treatment")), data = data)
-    r2 <- summary(model)$r.squared
-    p_val <- anova(model)$"Pr(>F)"[3]  # interaction term p-value
-    return(list(r2 = r2, p = p_val))
-  }
+  # Ensure proper data types
+  data$year <- as.factor(data$year)
+  data$treatment <- as.factor(data$treatment)
+  
+  # Set up theme and colors
+  my_theme <- create_enhanced_theme()
+  treatment_colors <- get_treatment_colors(unique(data$treatment))
+  
+  # Define physiological bounds
+  bounds <- list(
+    photosynthesis = list(lower = -5, upper = 30),
+    transpiration = list(lower = 0, upper = 0.02),
+    conductance = list(lower = 0, upper = 1),
+    vpd = list(lower = 0, upper = 10)
+  )
+  
+  # Handle outliers
+  data <- lapply(names(bounds), function(var) {
+    handle_outliers(data, var, bounds[[var]])
+  }) %>% bind_rows()
   
   # Create VPD response plots
   p_photo <- ggplot(data, aes(x = vpd, y = photosynthesis)) +
     geom_point(aes(color = treatment), alpha = 0.5) +
-    geom_smooth(aes(color = treatment), method = "lm") +
+    geom_smooth(aes(color = treatment), method = "loess", span = 0.75) +
+    scale_color_manual(values = treatment_colors) +
     facet_grid(stress_level ~ year) +
-    theme_bw() +
     labs(title = "VPD Response - Photosynthesis",
          x = "Leaf-to-air VPD (kPa)",
          y = expression(A~(μmol~m^-2~s^-1)),
-         color = "Treatment")
+         color = "Treatment") +
+    my_theme
   
   p_cond <- ggplot(data, aes(x = vpd, y = conductance)) +
     geom_point(aes(color = treatment), alpha = 0.5) +
-    geom_smooth(aes(color = treatment), method = "lm") +
+    geom_smooth(aes(color = treatment), method = "loess", span = 0.75) +
+    scale_color_manual(values = treatment_colors) +
     facet_grid(stress_level ~ year) +
-    theme_bw() +
     labs(title = "VPD Response - Conductance",
          x = "Leaf-to-air VPD (kPa)",
          y = expression(g[sw]~(mol~m^-2~s^-1)),
-         color = "Treatment")
+         color = "Treatment") +
+    my_theme
   
   p_trans <- ggplot(data, aes(x = vpd, y = transpiration)) +
     geom_point(aes(color = treatment), alpha = 0.5) +
-    geom_smooth(aes(color = treatment), method = "lm") +
+    geom_smooth(aes(color = treatment), method = "loess", span = 0.75) +
+    scale_color_manual(values = treatment_colors) +
     facet_grid(stress_level ~ year) +
-    theme_bw() +
     labs(title = "VPD Response - Transpiration",
          x = "Leaf-to-air VPD (kPa)",
          y = expression(E~(mmol~m^-2~s^-1)),
-         color = "Treatment")
+         color = "Treatment") +
+    my_theme
   
-  # Combine plots using patchwork
+  # Combine plots
   vpd_plots <- p_photo / p_cond / p_trans +
     plot_annotation(
       title = "VPD Response Curves by Treatment and Stress Level",
-      theme = theme(plot.title = element_text(hjust = 0.5))
+      theme = theme(plot.title = element_text(size = 14, face = "bold", hjust = 0.5))
     )
   
   return(vpd_plots)
 }
 
-# Plot leaf temperature responses with treatment × stress interactions
+# Updated plot_tleaf_responses function
 plot_tleaf_responses <- function(data) {
+  # Add validation
+  required_cols <- c("year", "treatment", "stress_level", "leaf_temp", "photosynthesis")
+  validate_plot_data(data, required_cols)
+  
+  # Set up theme and colors
+  my_theme <- create_enhanced_theme()
+  treatment_colors <- get_treatment_colors(unique(data$treatment))
+  
   # Ensure factors
   data$year <- as.factor(data$year)
   data$treatment <- as.factor(data$treatment)
@@ -130,19 +312,19 @@ plot_tleaf_responses <- function(data) {
   stress_temp_p <- model_summary["leaf_temp:stress_level", "Pr(>F)"]
   three_way_p <- model_summary["leaf_temp:treatment:stress_level", "Pr(>F)"]
   
-  # Create interaction stats label
+  # Create interaction stats label with improved formatting
   interaction_label <- sprintf(
     "Interactions:\nTx × Stress: p = %.3f\nTx × Temp: p = %.3f\nStress × Temp: p = %.3f\nThree-way: p = %.3f",
     tx_stress_p, tx_temp_p, stress_temp_p, three_way_p
   )
   
-  # Plot with all interactions shown
+  # Plot with improved aesthetics
   p_interaction <- ggplot(data, aes(x = leaf_temp, y = photosynthesis, color = treatment, linetype = stress_level)) +
-    geom_point(alpha = 0.5) +
-    geom_smooth(method = "lm") +
+    geom_point(alpha = 0.6) +
+    geom_smooth(method = "loess", span = 0.75, se = TRUE) +
+    scale_color_manual(values = treatment_colors) +
     facet_wrap(~year) +
-    theme_bw() +
-    theme(panel.grid = element_blank()) +
+    my_theme +
     labs(title = "Leaf Temperature Response by Treatment and Stress Level",
          x = "Leaf Temperature (°C)",
          y = expression(A[net]~(μmol~m^-2~s^-1)),
@@ -152,7 +334,6 @@ plot_tleaf_responses <- function(data) {
              label = interaction_label,
              hjust = -0.1, vjust = 1.5)
   
-  # Return plot and stats
   return(list(
     plot = p_interaction,
     stats = list(
@@ -168,8 +349,17 @@ plot_tleaf_responses <- function(data) {
   ))
 }
 
-# Plot max temperature responses with treatment × stress interactions
+# Updated plot_tmax_interactions function
 plot_tmax_interactions <- function(data) {
+  # Add validation
+  required_cols <- c("tmax", "photosynthesis", "conductance", "transpiration",
+                     "treatment", "stress_level", "year")
+  validate_plot_data(data, required_cols)
+  
+  # Set up theme and colors
+  my_theme <- create_enhanced_theme()
+  treatment_colors <- get_treatment_colors(unique(data$treatment))
+  
   # Calculate models for each response variable
   models <- list(
     photo = lm(photosynthesis ~ tmax * treatment * stress_level, data = data),
@@ -188,30 +378,25 @@ plot_tmax_interactions <- function(data) {
     )
   })
   
-  # Create plots with interaction labels
+  # Create plots with improved aesthetics
   p_photo <- ggplot(data, aes(x = tmax, y = photosynthesis, color = treatment, linetype = stress_level)) +
-    geom_point(alpha = 0.5) +
-    geom_smooth(method = "lm") +
+    geom_point(alpha = 0.6) +
+    geom_smooth(method = "loess", span = 0.75, se = TRUE) +
+    scale_color_manual(values = treatment_colors) +
     facet_wrap(~year) +
-    theme_bw() +
-    theme(panel.grid = element_blank()) +
+    my_theme +
     labs(title = "Temperature Response - Photosynthesis",
          subtitle = sprintf("Tx × Stress: p = %.3f, Three-way: p = %.3f", 
                             stats$photo$tx_stress, stats$photo$three_way),
          x = "Maximum Temperature (°C)",
-         y = expression(A[net]~(μmol~m^-2~s^-1))) +
-    annotate("text", x = -Inf, y = Inf,
-             label = sprintf("Tx × Temp: p = %.3f\nStress × Temp: p = %.3f",
-                             stats$photo$tx_temp, stats$photo$stress_temp),
-             hjust = -0.1, vjust = 1.5)
+         y = expression(A[net]~(μmol~m^-2~s^-1)))
   
-  # Similar plots for conductance and transpiration
   p_cond <- ggplot(data, aes(x = tmax, y = conductance, color = treatment, linetype = stress_level)) +
-    geom_point(alpha = 0.5) +
-    geom_smooth(method = "lm") +
+    geom_point(alpha = 0.6) +
+    geom_smooth(method = "loess", span = 0.75, se = TRUE) +
+    scale_color_manual(values = treatment_colors) +
     facet_wrap(~year) +
-    theme_bw() +
-    theme(panel.grid = element_blank()) +
+    my_theme +
     labs(title = "Temperature Response - Conductance",
          subtitle = sprintf("Tx × Stress: p = %.3f, Three-way: p = %.3f", 
                             stats$cond$tx_stress, stats$cond$three_way),
@@ -219,22 +404,22 @@ plot_tmax_interactions <- function(data) {
          y = expression(g[sw]~(mol~m^-2~s^-1)))
   
   p_trans <- ggplot(data, aes(x = tmax, y = transpiration, color = treatment, linetype = stress_level)) +
-    geom_point(alpha = 0.5) +
-    geom_smooth(method = "lm") +
+    geom_point(alpha = 0.6) +
+    geom_smooth(method = "loess", span = 0.75, se = TRUE) +
+    scale_color_manual(values = treatment_colors) +
     facet_wrap(~year) +
-    theme_bw() +
-    theme(panel.grid = element_blank()) +
+    my_theme +
     labs(title = "Temperature Response - Transpiration",
          subtitle = sprintf("Tx × Stress: p = %.3f, Three-way: p = %.3f", 
                             stats$trans$tx_stress, stats$trans$three_way),
          x = "Maximum Temperature (°C)",
          y = expression(E~(mmol~m^-2~s^-1)))
   
-  # Combine plots
+  # Combine plots with improved layout
   combined_plots <- p_photo / p_cond / p_trans +
     plot_annotation(
       title = "Gas Exchange Responses to Temperature with Treatment × Stress Interactions",
-      theme = theme(plot.title = element_text(hjust = 0.5))
+      theme = theme(plot.title = element_text(size = 14, face = "bold", hjust = 0.5))
     )
   
   return(list(
@@ -246,80 +431,90 @@ plot_tmax_interactions <- function(data) {
 
 # Plot WUEi
 plot_WUEi <- function(data) {
-  # WUEi is already calculated in the data processing step
+  # Add validation
+  required_cols <- c("treatment", "WUEi", "year")
+  validate_plot_data(data, required_cols)
+  
+  # Set up theme and colors
+  my_theme <- create_enhanced_theme()
+  treatment_colors <- get_treatment_colors(unique(data$treatment))
+  
   ggplot(data, aes(x = treatment, y = WUEi)) +
-    geom_boxplot(aes(fill = treatment)) +
+    geom_boxplot(aes(fill = treatment), outlier.shape = 21, outlier.alpha = 0.5) +
+    scale_fill_manual(values = treatment_colors) +
     facet_wrap(~year) +
-    theme_bw() +
+    my_theme +
     labs(title = "Intrinsic Water Use Efficiency (WUEi)",
          y = expression(WUE[i]~(μmol~CO[2]~mol^-1~H[2]*O)),
          x = "Treatment",
-         fill = "Treatment") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          legend.position = "bottom",
-          strip.text = element_text(size = 10),
-          strip.background = element_rect(fill = "white"),
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank())
+         fill = "Treatment")
 }
 
-# Create summary statistics plot
+# Updated plot_annual_comparison function
 plot_annual_comparison <- function(stats_data) {
-  ggplot(stats_data, 
-         aes(x = treatment, y = photosynthesis_mean)) +
+  # Add validation
+  required_cols <- c("treatment", "photosynthesis_mean", "photosynthesis_se", "year")
+  validate_plot_data(stats_data, required_cols)
+  
+  # Set up theme and colors
+  my_theme <- create_enhanced_theme()
+  treatment_colors <- get_treatment_colors(unique(stats_data$treatment))
+  
+  ggplot(stats_data, aes(x = treatment, y = photosynthesis_mean)) +
     geom_bar(stat = "identity", aes(fill = treatment), position = "dodge") +
     geom_errorbar(aes(ymin = photosynthesis_mean - photosynthesis_se, 
                       ymax = photosynthesis_mean + photosynthesis_se),
                   position = position_dodge(0.9), 
                   width = 0.2) +
+    scale_fill_manual(values = treatment_colors) +
     facet_wrap(~year) +
-    theme_bw() +
+    my_theme +
     labs(title = "Net Photosynthesis by Treatment",
          y = expression(A~(μmol~m^-2~s^-1)),
          x = "Treatment",
-         fill = "Treatment") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          legend.position = "bottom",
-          strip.text = element_text(size = 10),
-          strip.background = element_rect(fill = "white"),
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank())
+         fill = "Treatment")
 }
 
-# Add new plot for diurnal patterns
+# Updated plot_diurnal_patterns function
 plot_diurnal_patterns <- function(data) {
+  # Add validation
+  required_cols <- c("measurement_period", "A", "treatment", "stress_level")
+  validate_plot_data(data, required_cols)
+  
+  # Set up theme and colors
+  my_theme <- create_enhanced_theme()
+  treatment_colors <- get_treatment_colors(unique(data$treatment))
+  
   ggplot(data, aes(x = measurement_period, y = A)) +
-    geom_boxplot(aes(fill = treatment)) +
+    geom_boxplot(aes(fill = treatment), outlier.shape = 21, outlier.alpha = 0.5) +
+    scale_fill_manual(values = treatment_colors) +
     facet_wrap(~stress_level) +
-    theme_bw() +
+    my_theme +
     labs(title = "Diurnal Patterns of Net Photosynthesis",
          y = expression(A~(μmol~m^-2~s^-1)),
          x = "Measurement Period",
-         fill = "Treatment") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          legend.position = "bottom",
-          strip.text = element_text(size = 10),
-          strip.background = element_rect(fill = "white"),
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank())
+         fill = "Treatment")
 }
 
-# Add new plot for stress response
+# Updated plot_stress_response function
 plot_stress_response <- function(data) {
+  # Add validation
+  required_cols <- c("stress_level", "A", "treatment", "measurement_period")
+  validate_plot_data(data, required_cols)
+  
+  # Set up theme and colors
+  my_theme <- create_enhanced_theme()
+  treatment_colors <- get_treatment_colors(unique(data$treatment))
+  
   ggplot(data, aes(x = stress_level, y = A)) +
-    geom_boxplot(aes(fill = treatment)) +
+    geom_boxplot(aes(fill = treatment), outlier.shape = 21, outlier.alpha = 0.5) +
+    scale_fill_manual(values = treatment_colors) +
     facet_wrap(~measurement_period) +
-    theme_bw() +
+    my_theme +
     labs(title = "Stress Response of Net Photosynthesis",
          y = expression(A~(μmol~m^-2~s^-1)),
          x = "Stress Level",
-         fill = "Treatment") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          legend.position = "bottom",
-          strip.text = element_text(size = 10),
-          strip.background = element_rect(fill = "white"),
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank())
+         fill = "Treatment")
 }
 
 # Add to 5_visualization.R

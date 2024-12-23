@@ -34,18 +34,21 @@ print(pairs_conductance)
 print(pairs_photosynthesis)
 print(pairs_transpiration)
 
-# Step 6: Plot the interactions
+# Step 6: Plot the interactions with no gridlines
 plot_conductance <- plot(emm_conductance, comparisons = TRUE) +
   ggtitle("Conductance EMMs") +
-  theme_minimal()
+  theme_minimal() +
+  theme(panel.grid = element_blank())
 
 plot_photosynthesis <- plot(emm_photosynthesis, comparisons = TRUE) +
   ggtitle("Photosynthesis EMMs") +
-  theme_minimal()
+  theme_minimal() +
+  theme(panel.grid = element_blank())
 
 plot_transpiration <- plot(emm_transpiration, comparisons = TRUE) +
   ggtitle("Transpiration EMMs") +
-  theme_minimal()
+  theme_minimal() +
+  theme(panel.grid = element_blank())
 
 # Display plots
 print(plot_conductance)

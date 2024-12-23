@@ -15,6 +15,8 @@ load_data <- function(paths = default_paths) {
   # Validate that data exists in the environment
   missing_data <- sapply(paths, function(df_name) !exists(df_name, envir = .GlobalEnv))
   
+  print(missing_data)  # Add this line to check which dataframes are missing
+  
   if (any(missing_data)) {
     stop(paste("Missing required dataframes in environment:", 
                paste(names(paths)[missing_data], collapse = ", ")))

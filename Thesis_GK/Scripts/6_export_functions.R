@@ -1,301 +1,250 @@
 # 6_export_functions.R
 # Functions for exporting results to files
 
-# Export tables to CSV files
+# Add the new table export function
 export_tables <- function(results, output_dir = "output_tables") {
-  log_message("Starting table export...")
+  message("\nStarting table export...")
   
-  # Create output directory
-  dir.create(output_dir, showWarnings = FALSE)
-  log_message(paste("Created output directory:", output_dir))
+  # Create output directory with error handling and full path
+  output_dir <- file.path(getwd(), output_dir)
+  dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+  message(sprintf("Output directory: %s", output_dir))
   
-  # Validate results structure
-  if (!is.list(results)) {
-    log_message("ERROR: results must be a list")
-    return(FALSE)
-  }
+  # Clean old files
+  unlink(file.path(output_dir, "*"))
   
-  if (!all(c("basic_stats", "mixed_models") %in% names(results))) {
-    log_message("ERROR: results missing required components")
-    log_message(paste("Available components:", paste(names(results), collapse = ", ")))
-    return(FALSE)
+  if (!dir.exists(output_dir)) {
+    stop(sprintf("Failed to create output directory: %s", output_dir))
   }
   
   # Export basic statistics
-  tryCatch({
-    log_message("Exporting basic statistics...")
-    export_basic_stats(results$basic_stats, output_dir)
-  }, error = function(e) {
-    log_message(paste("ERROR exporting basic stats:", e$message))
-  })
+  if (!is.null(results$basic_stats)) {
+    message("Exporting basic statistics...")
+    write.csv(results$basic_stats$combined, 
+              file.path(output_dir, "basic_statistics.csv"))
+    
+    capture.output(
+      print(results$basic_stats$combined), 
+      file = file.path(output_dir, "basic_statistics.txt")
+    )
+  }
   
   # Export model results
-  tryCatch({
-    log_message("Exporting model results...")
-    export_model_results(results$mixed_models, output_dir)
-  }, error = function(e) {
-    log_message(paste("ERROR exporting model results:", e$message))
-  })
-  
-  # Export VPD analysis results if available
-  if (!is.null(results$vpd_analysis) && !is.null(results$vpd_analysis$results)) {
-    tryCatch({
-      log_message("Exporting VPD analysis results...")
-      export_vpd_results(results$vpd_analysis$results, output_dir)
-    }, error = function(e) {
-      log_message(paste("ERROR exporting VPD analysis:", e$message))
-    })
-  }
-  
-  log_message("Table export completed")
-}
-
-# Helper function to export basic statistics
-export_basic_stats <- function(stats, output_dir) {
-  if (!all(c("year_2022", "year_2023", "combined") %in% names(stats))) {
-    log_message("ERROR: basic_stats missing required components")
-    log_message(paste("Available components:", paste(names(stats), collapse = ", ")))
-    return(FALSE)
-  }
-  
-  for (year in c("2022", "2023", "combined")) {
-    filename <- file.path(output_dir, paste0("basic_stats_", year, ".csv"))
-    tryCatch({
-      write.csv(stats[[paste0("year_", year)]], filename, row.names = TRUE)
-      log_message(paste("Exported:", filename))
-    }, error = function(e) {
-      log_message(paste("ERROR exporting", filename, ":", e$message))
-    })
-  }
-}
-
-# Helper function to export model results
-export_model_results <- function(models, output_dir) {
-  if (is.null(models) || length(models) == 0) {
-    log_message("WARNING: No model results to export")
-    return(FALSE)
-  }
-  
-  log_message(paste("Processing models:", paste(names(models), collapse = ", ")))
-  
-  lapply(names(models), function(param) {
-    # Export EMMs
-    tryCatch({
-      if (!is.null(models[[param]]$emm)) {
-        # CSV output
-        emm_file <- file.path(output_dir, paste0("emmeans_", param, ".csv"))
-        emm_data <- as.data.frame(models[[param]]$emm)
-        write.csv(emm_data, emm_file, row.names = FALSE)
-        log_message(paste("Exported:", emm_file))
-        
-        # Text output
-        txt_file <- file.path(output_dir, paste0("emmeans_", param, ".txt"))
-        capture.output(print(models[[param]]$emm), file = txt_file)
-        log_message(paste("Exported:", txt_file))
-        
-        # PNG output - create table visualization
-        png_file <- file.path(output_dir, paste0("emmeans_", param, ".png"))
-        emm_plot <- gridExtra::tableGrob(emm_data)
-        ggsave(png_file, emm_plot, width = 10, height = 6)
-        log_message(paste("Exported:", png_file))
-      }
-    }, error = function(e) {
-      log_message(paste("ERROR exporting EMMs for", param, ":", e$message))
-    })
+  if (!is.null(results$models)) {
+    vars <- names(results$models)
+    message(sprintf("Processing variables: %s", paste(vars, collapse = ", ")))
     
-    # ANOVA results in multiple formats
-    tryCatch({
-      if (!is.null(models[[param]]$anova)) {
-        # CSV output
-        anova_file <- file.path(output_dir, paste0("anova_", param, ".csv"))
-        anova_df <- as.data.frame(models[[param]]$anova)
-        anova_df$Term <- rownames(anova_df)
-        write.csv(anova_df, anova_file, row.names = FALSE)
-        log_message(paste("Exported:", anova_file))
-        
-        # Text output
-        txt_file <- file.path(output_dir, paste0("anova_", param, ".txt"))
-        capture.output(print(models[[param]]$anova), file = txt_file)
-        log_message(paste("Exported:", txt_file))
-        
-        # PNG output
-        png_file <- file.path(output_dir, paste0("anova_", param, ".png"))
-        anova_plot <- gridExtra::tableGrob(anova_df)
-        ggsave(png_file, anova_plot, width = 10, height = 6)
-        log_message(paste("Exported:", png_file))
+    for (var in vars) {
+      # Export ANOVA results
+      if (!is.null(results$models[[var]]$anova)) {
+        write.csv(
+          as.data.frame(results$models[[var]]$anova),
+          file.path(output_dir, sprintf("anova_%s.csv", var))
+        )
+        capture.output(
+          print(results$models[[var]]$anova),
+          file = file.path(output_dir, sprintf("anova_%s.txt", var))
+        )
       }
-    }, error = function(e) {
-      log_message(paste("ERROR exporting ANOVA results for", param, ":", e$message))
-    })
-  })
-}
-
-# Helper function to export VPD analysis results
-export_vpd_results <- function(vpd_results, output_dir) {
-  if (is.null(vpd_results) || length(vpd_results) == 0) {
-    log_message("WARNING: No VPD results to export")
-    return(FALSE)
+      
+      # Export EMMs
+      if (!is.null(results$models[[var]]$emm)) {
+        write.csv(
+          as.data.frame(results$models[[var]]$emm),
+          file.path(output_dir, sprintf("emmeans_%s.csv", var))
+        )
+        capture.output(
+          print(results$models[[var]]$emm),
+          file = file.path(output_dir, sprintf("emmeans_%s.txt", var))
+        )
+      }
+      
+      # Export contrasts
+      if (!is.null(results$models[[var]]$contrasts)) {
+        write.csv(
+          as.data.frame(results$models[[var]]$contrasts),
+          file.path(output_dir, sprintf("contrasts_%s.csv", var))
+        )
+        capture.output(
+          print(results$models[[var]]$contrasts),
+          file = file.path(output_dir, sprintf("contrasts_%s.txt", var))
+        )
+      }
+    }
   }
   
-  log_message(paste("Processing VPD analyses:", paste(names(vpd_results), collapse = ", ")))
-  
-  lapply(names(vpd_results), function(param) {
-    # Export ANOVA results
-    tryCatch({
-      if (!is.null(vpd_results[[param]]$anova)) {
-        filename <- file.path(output_dir, paste0("vpd_anova_", param, ".csv"))
-        anova_df <- as.data.frame(vpd_results[[param]]$anova)
-        anova_df$Term <- rownames(anova_df)
-        write.csv(anova_df, filename, row.names = FALSE)
-        log_message(paste("Exported:", filename))
-      }
-    }, error = function(e) {
-      log_message(paste("ERROR exporting VPD ANOVA for", param, ":", e$message))
-    })
-    
-    # Export EMMs at different VPD levels
-    tryCatch({
-      if (!is.null(vpd_results[[param]]$emm)) {
-        filename <- file.path(output_dir, paste0("vpd_emmeans_", param, ".csv"))
-        write.csv(as.data.frame(vpd_results[[param]]$emm),
-                  filename, row.names = FALSE)
-        log_message(paste("Exported:", filename))
-      }
-    }, error = function(e) {
-      log_message(paste("ERROR exporting VPD EMMs for", param, ":", e$message))
-    })
-  })
+  message("\nTable export completed")
+  return(TRUE)
 }
 
-# Export figures
+# Export figures function with improved error handling
 export_figures <- function(results, output_dir = "output_figures") {
-  log_message("Starting figure export...")
+  message("\nStarting figure export...")
   
-  # Create output directory
-  dir.create(output_dir, showWarnings = FALSE)
-  log_message(paste("Created output directory:", output_dir))
+  # Create output directory with error handling and full path
+  output_dir <- file.path(getwd(), output_dir)
+  dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+  message(sprintf("Output directory: %s", output_dir))
   
-  # Validate results structure
-  if (!is.list(results)) {
-    log_message("ERROR: results must be a list")
-    return(FALSE)
+  # ADD THE unlink LINE HERE, before the if statement
+  unlink(file.path(output_dir, "*"))  # Clean old files
+  
+  if (!dir.exists(output_dir)) {
+    stop(sprintf("Failed to create output directory: %s", output_dir))
   }
+  
+  # Helper function for safe plot saving
+  safe_save_plot <- function(plot, filename, width, height, ...) {
+    tryCatch({
+      # Save as both PDF and PNG
+      ggsave(filename = sub("\\.pdf$", ".pdf", filename),
+             plot = plot,
+             width = width,
+             height = height,
+             device = "pdf",
+             dpi = 300,
+             ...)
+      message(sprintf("Saved PDF: %s", basename(filename)))
+      
+      ggsave(filename = sub("\\.pdf$", ".png", filename),
+             plot = plot,
+             width = width,
+             height = height,
+             device = "png",
+             dpi = 300,
+             ...)
+      message(sprintf("Saved PNG: %s", sub("\\.pdf$", ".png", basename(filename))))
+      return(TRUE)
+    }, error = function(e) {
+      message(sprintf("ERROR saving %s: %s", basename(filename), e$message))
+      return(FALSE)
+    })
+  }
+  
+  # Track successful exports
+  exports <- list()
   
   # Export treatment effects plot
-  tryCatch({
-    if (!is.null(results$treatment_plots)) {
-      filename <- file.path(output_dir, "treatment_effects.png")
-      ggsave(filename, plot = results$treatment_plots,
-             width = 10, height = 12, dpi = 300)
-      log_message(paste("Exported:", filename))
-    } else {
-      log_message("WARNING: treatment_plots not found in results")
-    }
-  }, error = function(e) {
-    log_message(paste("ERROR exporting treatment effects plot:", e$message))
-  })
+  if (!is.null(results$treatment_plots)) {
+    message("\nExporting treatment effects plot...")
+    exports$treatment <- safe_save_plot(
+      results$treatment_plots,
+      file.path(output_dir, "treatment_effects.pdf"),
+      width = 12,
+      height = 16
+    )
+  }
   
-  # Export VPD response plots - both combined and individual
-  tryCatch({
+  # Export VPD response plots
+  if (!is.null(results$vpd_analysis)) {
+    message("\nExporting VPD response plots...")
     if (!is.null(results$vpd_analysis$plot)) {
-      # Combined VPD response plot
-      filename <- file.path(output_dir, "vpd_response_combined.png")
-      ggsave(filename, plot = results$vpd_analysis$plot,
-             width = 12, height = 15, dpi = 300, limitsize = FALSE)
-      log_message(paste("Successfully exported combined VPD response plot:", filename))
-      
-      # Individual VPD response plots
-      if (!is.null(results$vpd_analysis$plots)) {
-        # Photosynthesis
-        if (!is.null(results$vpd_analysis$plots$photo)) {
-          filename <- file.path(output_dir, "vpd_response_photosynthesis.png")
-          ggsave(filename, plot = results$vpd_analysis$plots$photo,
-                 width = 10, height = 6, dpi = 300)
-          log_message(paste("Successfully exported photosynthesis VPD response plot:", filename))
-        }
-        
-        # Conductance
-        if (!is.null(results$vpd_analysis$plots$cond)) {
-          filename <- file.path(output_dir, "vpd_response_conductance.png")
-          ggsave(filename, plot = results$vpd_analysis$plots$cond,
-                 width = 10, height = 6, dpi = 300)
-          log_message(paste("Successfully exported conductance VPD response plot:", filename))
-        }
-        
-        # Transpiration
-        if (!is.null(results$vpd_analysis$plots$trans)) {
-          filename <- file.path(output_dir, "vpd_response_transpiration.png")
-          ggsave(filename, plot = results$vpd_analysis$plots$trans,
-                 width = 10, height = 6, dpi = 300)
-          log_message(paste("Successfully exported transpiration VPD response plot:", filename))
-        }
-      }
-      
-      # In export_figures function, add:
-      # Export interaction plots
-      if (!is.null(results$interactions)) {
-        if (!is.null(results$interactions$tleaf$plot)) {
-          filename <- file.path(output_dir, "tleaf_interactions.png")
-          ggsave(filename, plot = results$interactions$tleaf$plot,
-                 width = 12, height = 8, dpi = 300)
-          log_message(paste("Exported:", filename))
-        }
-        
-        if (!is.null(results$interactions$tmax$plot)) {
-          filename <- file.path(output_dir, "tmax_interactions.png")
-          ggsave(filename, plot = results$interactions$tmax$plot,
-                 width = 12, height = 15, dpi = 300)
-          log_message(paste("Exported:", filename))
-        }
-      }
-      
-      # If separate temperature response plot exists
-      if (!is.null(results$temp_analysis$plot)) {
-        filename <- file.path(output_dir, "temp_response.png")
-        ggsave(filename, plot = results$temp_analysis$plot,
-               width = 12, height = 15, dpi = 300, limitsize = FALSE)
-        log_message(paste("Successfully exported temperature response plot:", filename))
-      }
-      
-      # If combined environmental response plot exists
-      if (!is.null(results$env_response$plot)) {
-        filename <- file.path(output_dir, "environmental_response.png")
-        ggsave(filename, plot = results$env_response$plot,
-               width = 15, height = 20, dpi = 300, limitsize = FALSE)
-        log_message(paste("Successfully exported environmental response plot:", filename))
-      }
-    } else {
-      log_message("WARNING: vpd_analysis plot not found in results")
+      exports$vpd <- safe_save_plot(
+        results$vpd_analysis$plot,
+        file.path(output_dir, "vpd_response.pdf"),
+        width = 10,
+        height = 14
+      )
     }
-  }, error = function(e) {
-    log_message(paste("ERROR exporting response plots:", e$message))
-  })
+  }
+  
+  # Export WUEi plot
+  if (!is.null(results$wuei_plot)) {
+    message("\nExporting WUEi plot...")
+    exports$wuei <- safe_save_plot(
+      results$wuei_plot,
+      file.path(output_dir, "wuei_comparison.pdf"),
+      width = 8,
+      height = 6
+    )
+  }
   
   # Export annual comparison plot
-  tryCatch({
-    if (!is.null(results$annual_comparison)) {
-      filename <- file.path(output_dir, "annual_comparison.png")
-      ggsave(filename, plot = results$annual_comparison,
-             width = 10, height = 6, dpi = 300)
-      log_message(paste("Exported:", filename))
+  if (!is.null(results$annual_comparison)) {
+    message("\nExporting annual comparison plot...")
+    exports$annual <- safe_save_plot(
+      results$annual_comparison,
+      file.path(output_dir, "annual_comparison.pdf"),
+      width = 8,
+      height = 6
+    )
+  }
+  
+  # Export interaction plots
+  if (!is.null(results$interactions)) {
+    message("\nExporting interaction plots...")
+    if (!is.null(results$interactions$tleaf$plot)) {
+      exports$tleaf <- safe_save_plot(
+        results$interactions$tleaf$plot,
+        file.path(output_dir, "tleaf_interactions.pdf"),
+        width = 10,
+        height = 8
+      )
+    }
+    if (!is.null(results$interactions$tmax$plot)) {
+      exports$tmax <- safe_save_plot(
+        results$interactions$tmax$plot,
+        file.path(output_dir, "tmax_interactions.pdf"),
+        width = 12,
+        height = 15
+      )
+    }
+  }
+  
+  # Print summary of exports
+  message("\nExport Summary:")
+  message(sprintf("Successfully exported %d/%d plots", 
+                  sum(unlist(exports)), length(exports)))
+  
+  message("\nFigure export completed")
+  return(invisible(exports))
+}
+
+# Function to verify exported files with improved checking
+verify_exports <- function(results, tables_dir = "output_tables", figures_dir = "output_figures") {
+  message("\nVerifying exported files...")
+  
+  # Get full paths
+  tables_dir <- file.path(getwd(), tables_dir)
+  figures_dir <- file.path(getwd(), figures_dir)
+  
+  # Check directories
+  dirs_exist <- c(
+    tables = dir.exists(tables_dir),
+    figures = dir.exists(figures_dir)
+  )
+  
+  message("\nDirectory Status:")
+  message(sprintf("Tables directory (%s): %s", tables_dir, 
+                  if(dirs_exist["tables"]) "OK" else "Missing"))
+  message(sprintf("Figures directory (%s): %s", figures_dir, 
+                  if(dirs_exist["figures"]) "OK" else "Missing"))
+  
+  # List files if directories exist
+  if (dirs_exist["tables"]) {
+    message("\nExisting table files:")
+    table_files <- list.files(tables_dir, pattern = "\\.(csv|txt)$")
+    if (length(table_files) > 0) {
+      message(paste(" -", table_files, collapse = "\n"))
     } else {
-      log_message("WARNING: annual_comparison not found in results")
+      message("No table files found")
     }
-  }, error = function(e) {
-    log_message(paste("ERROR exporting annual comparison plot:", e$message))
-  })
+  }
   
-  # Export WUEi plot if it exists
-  tryCatch({
-    if (!is.null(results$wuei_plot)) {
-      filename <- file.path(output_dir, "wuei_comparison.png")
-      ggsave(filename, plot = results$wuei_plot,
-             width = 10, height = 6, dpi = 300)
-      log_message(paste("Exported:", filename))
+  if (dirs_exist["figures"]) {
+    message("\nExisting figure files:")
+    figure_files <- list.files(figures_dir, pattern = "\\.(pdf|png)$")
+    if (length(figure_files) > 0) {
+      message(paste(" -", figure_files, collapse = "\n"))
+    } else {
+      message("No figure files found")
     }
-  }, error = function(e) {
-    log_message(paste("ERROR exporting WUEi plot:", e$message))
-  })
+  }
   
-  log_message("Figure export completed")
+  message("\nExport verification completed")
+  return(invisible(list(
+    dirs_exist = dirs_exist,
+    table_files = if(dirs_exist["tables"]) table_files else character(0),
+    figure_files = if(dirs_exist["figures"]) figure_files else character(0)
+  )))
 }

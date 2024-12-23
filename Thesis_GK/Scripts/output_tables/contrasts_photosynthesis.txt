@@ -1,0 +1,32 @@
+stress_level = Not Stressed, variety = CH, year = 2022:
+ contrast estimate    SE  df t.ratio p.value
+ 2L - 4L   -0.2028 0.260 557  -0.781  0.4349
+
+stress_level = Stressed, variety = CH, year = 2022:
+ contrast estimate    SE  df t.ratio p.value
+ 2L - 4L   -0.2937 0.300 557  -0.978  0.3285
+
+stress_level = Not Stressed, variety = CS, year = 2022:
+ contrast estimate    SE  df t.ratio p.value
+ 2L - 4L   -0.3176 0.192 557  -1.654  0.0986
+
+stress_level = Stressed, variety = CS, year = 2022:
+ contrast estimate    SE  df t.ratio p.value
+ 2L - 4L   -0.1398 0.176 557  -0.793  0.4279
+
+stress_level = Not Stressed, variety = CH, year = 2023:
+ contrast estimate    SE  df t.ratio p.value
+ 2L - 4L   -0.0173 0.304 557  -0.057  0.9546
+
+stress_level = Stressed, variety = CH, year = 2023:
+ contrast estimate    SE  df t.ratio p.value
+ 2L - 4L   -0.2435 0.297 557  -0.820  0.4125
+
+stress_level = Not Stressed, variety = CS, year = 2023:
+ contrast estimate    SE  df t.ratio p.value
+ 2L - 4L   -0.3677 0.217 557  -1.693  0.0910
+
+stress_level = Stressed, variety = CS, year = 2023:
+ contrast estimate    SE  df t.ratio p.value
+ 2L - 4L   -0.1233 0.229 557  -0.539  0.5898
+

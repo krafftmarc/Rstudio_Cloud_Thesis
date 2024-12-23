@@ -18,7 +18,7 @@ print_model_summaries <- function(results) {
   }
 }
 
-# Calculate basic statistics with variety and stress
+# Update calculate_basic_stats function to handle leaf_temp properly
 calculate_basic_stats <- function(data) {
   data %>%
     group_by(year, treatment, variety, stress_level) %>%

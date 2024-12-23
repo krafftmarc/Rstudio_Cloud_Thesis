@@ -1,0 +1,23 @@
+Anova Table (Type III tests)
+
+Response: conductance_scaled
+                                    Sum Sq  Df F value  Pr(>F)  
+(Intercept)                           0.51   1  0.5506 0.45842  
+treatment                             0.36   1  0.3952 0.52986  
+stress_level                          0.11   1  0.1225 0.72649  
+variety                               4.42   1  4.7980 0.02894 *
+year                                  1.75   1  1.9050 0.16811  
+treatment:stress_level                1.22   1  1.3301 0.24932  
+treatment:variety                     0.27   1  0.2941 0.58784  
+stress_level:variety                  0.61   1  0.6599 0.41698  
+treatment:year                        0.38   1  0.4119 0.52127  
+stress_level:year                     0.01   1  0.0125 0.91110  
+variety:year                          1.97   1  2.1377 0.14432  
+treatment:stress_level:variety        0.78   1  0.8446 0.35851  
+treatment:stress_level:year           0.28   1  0.3048 0.58116  
+treatment:variety:year                0.48   1  0.5233 0.46978  
+stress_level:variety:year             0.00   1  0.0008 0.97782  
+treatment:stress_level:variety:year   0.00   1  0.0007 0.97832  
+Residuals                           478.61 520                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

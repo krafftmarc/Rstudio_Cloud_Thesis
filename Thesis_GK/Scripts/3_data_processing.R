@@ -223,73 +223,73 @@ validate_processed_data <- function(data) {
   return(TRUE)
 }
 
-# Main function to process LICOR data
+# Updated process_licor_data function with proper leaf temperature handling
 process_licor_data <- function(data, year) {
-  # Get validated column mappings
-  cols <- get_licor_columns(data, year)
+  message(sprintf("\nProcessing LICOR data for %d", year))
+  message("Initial columns:")
+  print(names(data))
   
-  # Print column mapping for debugging
-  message("\nColumn mapping for year ", year, ":")
-  print(cols)
+  # First identify and standardize variety column
+  variety_col <- if(year == 2022) {
+    "Var"
+  } else {
+    "Variety"  # 2023 column name
+  }
   
-  # Select only the matched columns
-  filtered_data <- data[, cols, drop = FALSE]
-  
-  # Standardize column names
-  names(filtered_data) <- names(cols)
-  
-  # Process data with standardized column names
-  processed_data <- filtered_data %>%
+  # Process data with proper column references
+  processed_data <- data %>%
     mutate(
+      # Standardize treatment names
       treatment = case_when(
-        year == 2022 & treatment == "Base" ~ "4L (Pre-treatment)",
-        year == 2022 & treatment == "4" ~ "4L",
-        year == 2022 & treatment == "2" ~ "2L",
-        year == 2023 & treatment == "4L" ~ "4L",
-        year == 2023 & treatment == "2L" ~ "2L",
+        year == 2022 & Tx == "Base" ~ "4L (Pre-treatment)",
+        year == 2022 & Tx == "4" ~ "4L",
+        year == 2022 & Tx == "2" ~ "2L",
+        year == 2023 & Tx == "4L" ~ "4L",
+        year == 2023 & Tx == "2L" ~ "2L",
         TRUE ~ NA_character_
       ),
-      # Add variety standardization
+      # Use proper column reference for variety
       variety = case_when(
-        toupper(variety) %in% c("CH", "CHARDONNAY") ~ "CH",
-        toupper(variety) %in% c("CS", "CAB", "CABERNET", "CABERNET SAUVIGNON") ~ "CS",
+        toupper(get(variety_col)) %in% c("CH", "CHARDONNAY") ~ "CH",
+        toupper(get(variety_col)) %in% c("CS", "CAB", "CABERNET", "CABERNET SAUVIGNON") ~ "CS",
         TRUE ~ NA_character_
       ),
-      # Convert date if needed
+      # Convert date format based on year
       date = if(year == 2022) {
         as.Date(date, format = "%m/%d/%y")
       } else {
         as.Date(substr(date, 1, 8), format = "%Y%m%d")
       },
-      
-      # Ensure consistent data types for block, row, vine
-      block = as.character(block),  # Convert to character
-      row = as.character(row),      # Convert to character
-      vine = as.character(vine),    # Convert to character
-      
+      # Add other standardized columns
+      photosynthesis = A,
+      transpiration = E,
+      conductance = gsw,
+      vpd = VPDleaf,
+      co2 = Ci,
+      leaf_temp = TleafEB,  # Add leaf temperature mapping
       year = year,
-      
-      # Calculate WUEi (Intrinsic Water Use Efficiency)
-      WUEi = photosynthesis / conductance,
-      
-      # Standardize measurement periods
-      measurement_period = case_when(
-        toupper(time) %in% c("PREDAWN", "PRE-DAWN", "PRE_DAWN") ~ "Pre-dawn",
-        toupper(time) %in% c("MIDDAY", "MID-DAY", "MID_DAY") ~ "Midday",
-        TRUE ~ "Other"
-      ),
-      
-      # Standardize stress levels
+      WUEi = A / gsw,
       stress_level = case_when(
-        tolower(stress) == "s" ~ "Stressed",
-        tolower(stress) == "ns" ~ "Not Stressed",
+        tolower(Stress) == "s" ~ "Stressed",
+        tolower(Stress) == "ns" ~ "Not Stressed",
         TRUE ~ "Normal Schedule"
       )
     ) %>%
-    filter(!is.na(treatment)) %>%
-    filter_physiological_bounds()
+    # Filter invalid data
+    filter(
+      !is.na(treatment),
+      between(A, -5, 30),
+      between(E, 0, 0.02),
+      between(gsw, 0, 1),
+      between(VPDleaf, 0, 10)
+    ) %>%
+    # Select final columns
+    select(
+      date, treatment, variety, photosynthesis, transpiration, 
+      conductance, vpd, co2, WUEi, stress_level, year, leaf_temp  # Added leaf_temp
+    )
   
-  # Add diagnostic message for processed data
+  # Print summary for verification
   message("\nProcessing summary for year ", year, ":")
   message("Treatment counts:")
   print(table(processed_data$treatment))
@@ -297,14 +297,36 @@ process_licor_data <- function(data, year) {
   print(table(processed_data$variety))
   message("\nStress level counts:")
   print(table(processed_data$stress_level))
-  message("\nMeasurement period counts:")
-  print(table(processed_data$measurement_period))
-  message("\nTotal rows: ", nrow(processed_data))
-  
-  # Validate final processed data
-  validate_processed_data(processed_data)
+  message("\nLeaf temperature summary:")
+  print(summary(processed_data$leaf_temp))
   
   return(processed_data)
+}
+
+
+# Main analysis function
+run_analysis <- function() {
+  message("Starting analysis...")
+  
+  # Process both years
+  data_2022 <- process_licor_data(licor_comb_2022_final, 2022)
+  data_2023 <- process_licor_data(X2023_comb_Licor, 2023)
+  
+  # Combine datasets
+  combined_data <- bind_rows(data_2022, data_2023)
+  
+  message("\nCombined data summary:")
+  message("Total rows: ", nrow(combined_data))
+  message("Years present: ", paste(unique(combined_data$year), collapse = ", "))
+  message("Treatment levels: ", paste(unique(combined_data$treatment), collapse = ", "))
+  
+  # Create plots
+  treatment_plots <- plot_treatment_effects(combined_data)
+  
+  return(list(
+    data = combined_data,
+    treatment_plots = treatment_plots
+  ))
 }
 
 #------------------------------------------------------------------------------
@@ -326,6 +348,9 @@ process_cimis_data <- function(data, year) {
   if (length(missing_cols) > 0) {
     stop(paste("Missing required CIMIS columns:", paste(missing_cols, collapse = ", ")))
   }
+  
+  message("Processing CIMIS data...")
+  print(head(data))  # Print to verify columns and data
   
   # Process data with error handling
   processed_data <- tryCatch({

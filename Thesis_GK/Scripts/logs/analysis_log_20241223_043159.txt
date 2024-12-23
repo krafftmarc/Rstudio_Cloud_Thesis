@@ -1,0 +1,113 @@
+[2024-12-23 04:32:03] Checking R environment...
+[2024-12-23 04:32:03] R version: 4.4.2
+[2024-12-23 04:32:03] Sourcing required scripts...
+[2024-12-23 04:32:03] Successfully loaded: 1_packages_setup.R
+[2024-12-23 04:32:03] Successfully loaded: 2_data_loading.R
+[2024-12-23 04:32:03] Successfully loaded: 3_data_processing.R
+[2024-12-23 04:32:03] Successfully loaded: 4_statistical_analysis.R
+[2024-12-23 04:32:03] Successfully loaded: 5_visualization.R
+[2024-12-23 04:32:03] Successfully loaded: 6_export_functions.R
+[2024-12-23 04:32:03] Validating pre-loaded dataframes...
+[2024-12-23 04:32:03] All required dataframes are present.
+[2024-12-23 04:32:03] Starting analysis...
+[2024-12-23 04:32:03] Loading data files...
+[2024-12-23 04:32:03] Checking data quality...
+[2024-12-23 04:32:03] Checking data quality...
+[2024-12-23 04:32:03] Data quality checks completed
+[2024-12-23 04:32:03] 
+Processing LICOR data...
+[2024-12-23 04:32:04] Checking combined data structure:
+[2024-12-23 04:32:04] Treatment levels: 4L, 2L
+[2024-12-23 04:32:04] Years: 2022, 2023
+[2024-12-23 04:32:04] Number of rows by treatment and year:
+[2024-12-23 04:32:04] 
+Processing CIMIS data...
+[2024-12-23 04:32:04] CIMIS 2022 original columns:
+[2024-12-23 04:32:04] Stn Id, Stn Name, CIMIS Region, Date, Jul, ETo (in), qc...7, Precip (in), qc...9, Sol Rad (Ly/day), qc...11, Avg Vap Pres (mBars), qc...13, Max Air Temp (F), qc...15, Min Air Temp (F), qc...17, Avg Air Temp (F), qc...19, Max Rel Hum (%), qc...21, Min Rel Hum (%), qc...23, Avg Rel Hum (%), qc...25, Dew Point (F), qc...27, Avg Wind Speed (mph), qc...29, Wind Run (miles), qc...31, Avg Soil Temp (F), qc...33
+[2024-12-23 04:32:04] CIMIS data columns:
+[2024-12-23 04:32:04] Stn Id, Stn Name, CIMIS Region, Date, Jul, ETo (in), qc...7, Precip (in), qc...9, Sol Rad (Ly/day), qc...11, Avg Vap Pres (mBars), qc...13, Max Air Temp (F), qc...15, Min Air Temp (F), qc...17, Avg Air Temp (F), qc...19, Max Rel Hum (%), qc...21, Min Rel Hum (%), qc...23, Avg Rel Hum (%), qc...25, Dew Point (F), qc...27, Avg Wind Speed (mph), qc...29, Wind Run (miles), qc...31, Avg Soil Temp (F), qc...33
+[2024-12-23 04:32:04] Date column class after processing: Date
+[2024-12-23 04:32:04] CIMIS 2022 processed columns:
+[2024-12-23 04:32:04] date, ETo, precip, solar_rad, VPD, tmax, tmin, tmean, RH, wind, year
+[2024-12-23 04:32:04] CIMIS 2023 original columns:
+[2024-12-23 04:32:04] Stn Id, Stn Name, CIMIS Region, Date, Jul, ETo (in), qc...7, Precip (in), qc...9, Sol Rad (Ly/day), qc...11, Avg Vap Pres (mBars), qc...13, Max Air Temp (F), qc...15, Min Air Temp (F), qc...17, Avg Air Temp (F), qc...19, Max Rel Hum (%), qc...21, Min Rel Hum (%), qc...23, Avg Rel Hum (%), qc...25, Dew Point (F), qc...27, Avg Wind Speed (mph), qc...29, Wind Run (miles), qc...31, Avg Soil Temp (F), qc...33
+[2024-12-23 04:32:04] CIMIS data columns:
+[2024-12-23 04:32:04] Stn Id, Stn Name, CIMIS Region, Date, Jul, ETo (in), qc...7, Precip (in), qc...9, Sol Rad (Ly/day), qc...11, Avg Vap Pres (mBars), qc...13, Max Air Temp (F), qc...15, Min Air Temp (F), qc...17, Avg Air Temp (F), qc...19, Max Rel Hum (%), qc...21, Min Rel Hum (%), qc...23, Avg Rel Hum (%), qc...25, Dew Point (F), qc...27, Avg Wind Speed (mph), qc...29, Wind Run (miles), qc...31, Avg Soil Temp (F), qc...33
+[2024-12-23 04:32:04] Date column class after processing: Date
+[2024-12-23 04:32:04] CIMIS 2023 processed columns:
+[2024-12-23 04:32:04] date, ETo, precip, solar_rad, VPD, tmax, tmin, tmean, RH, wind, year
+[2024-12-23 04:32:04] 
+Merging LICOR and CIMIS data...
+[2024-12-23 04:32:04] Merged data columns:
+[2024-12-23 04:32:04] date, treatment, photosynthesis, transpiration, conductance, vpd, co2, stress, time, block, row, vine, variety, leaf_temp, year, WUEi, measurement_period, stress_level, VPD, tmax
+[2024-12-23 04:32:04] 
+Calculating basic statistics...
+[2024-12-23 04:32:04] 
+Fitting mixed models...
+[2024-12-23 04:32:04] 
+Initial Data Diagnostics:
+[2024-12-23 04:32:04] ----------------------
+[2024-12-23 04:32:04] Total rows: 536
+[2024-12-23 04:32:04] 
+Missing values by column:
+[2024-12-23 04:32:06] 
+Model Summaries:
+[2024-12-23 04:32:06] --------------
+[2024-12-23 04:32:06] 
+Variable: photosynthesis
+[2024-12-23 04:32:06] Type III ANOVA with interactions:
+[2024-12-23 04:32:06] 
+Estimated Marginal Means by Treatment × Stress × Variety:
+[2024-12-23 04:32:07] 
+Pairwise Comparisons:
+[2024-12-23 04:32:07] 
+Variable: transpiration
+[2024-12-23 04:32:07] Type III ANOVA with interactions:
+[2024-12-23 04:32:07] 
+Estimated Marginal Means by Treatment × Stress × Variety:
+[2024-12-23 04:32:07] 
+Pairwise Comparisons:
+[2024-12-23 04:32:07] 
+Variable: conductance
+[2024-12-23 04:32:07] Type III ANOVA with interactions:
+[2024-12-23 04:32:07] 
+Estimated Marginal Means by Treatment × Stress × Variety:
+[2024-12-23 04:32:07] 
+Pairwise Comparisons:
+[2024-12-23 04:32:07] 
+Analyzing VPD response...
+[2024-12-23 04:32:07] Beginning VPD response analysis...
+[2024-12-23 04:32:10] 
+Creating visualization plots...
+[2024-12-23 04:32:12] WUEi plot saved successfully
+[2024-12-23 04:32:12] Starting table export...
+[2024-12-23 04:32:12] Created output directory: output_tables
+[2024-12-23 04:32:12] Exporting basic statistics...
+[2024-12-23 04:32:12] Exported: output_tables/basic_stats_2022.csv
+[2024-12-23 04:32:12] Exported: output_tables/basic_stats_2023.csv
+[2024-12-23 04:32:12] Exported: output_tables/basic_stats_combined.csv
+[2024-12-23 04:32:12] Exporting model results...
+[2024-12-23 04:32:12] Processing models: photosynthesis, transpiration, conductance
+[2024-12-23 04:32:12] Exported: output_tables/emmeans_photosynthesis.csv
+[2024-12-23 04:32:12] Exported: output_tables/emmeans_photosynthesis.txt
+[2024-12-23 04:32:13] Exported: output_tables/emmeans_photosynthesis.png
+[2024-12-23 04:32:13] Exported: output_tables/anova_photosynthesis.csv
+[2024-12-23 04:32:13] Exported: output_tables/anova_photosynthesis.txt
+[2024-12-23 04:32:14] Exported: output_tables/anova_photosynthesis.png
+[2024-12-23 04:32:14] Exported: output_tables/emmeans_transpiration.csv
+[2024-12-23 04:32:14] Exported: output_tables/emmeans_transpiration.txt
+[2024-12-23 04:32:15] Exported: output_tables/emmeans_transpiration.png
+[2024-12-23 04:32:16] Exported: output_tables/anova_transpiration.csv
+[2024-12-23 04:32:16] Exported: output_tables/anova_transpiration.txt
+[2024-12-23 04:32:17] Exported: output_tables/anova_transpiration.png
+[2024-12-23 04:32:17] Exported: output_tables/emmeans_conductance.csv
+[2024-12-23 04:32:17] Exported: output_tables/emmeans_conductance.txt
+[2024-12-23 04:32:18] Exported: output_tables/emmeans_conductance.png
+[2024-12-23 04:32:18] Exported: output_tables/anova_conductance.csv
+[2024-12-23 04:32:18] Exported: output_tables/anova_conductance.txt
+[2024-12-23 04:32:19] Exported: output_tables/anova_conductance.png
+[2024-12-23 04:32:19] Table export completed
+[2024-12-23 04:32:19] Starting figure export...
+[2024-12-23 04:32:19] Created output directory: output_figures
+[2024-12-23 04:32:22] WARNING: [38;5;232mRemoved 24 rows containing non-finite outside the scale range
+(`stat_smooth()`).[39m

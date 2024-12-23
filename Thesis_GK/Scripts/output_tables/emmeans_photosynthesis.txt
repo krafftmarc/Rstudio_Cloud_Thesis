@@ -1,41 +1,41 @@
 stress_level = Not Stressed, variety = CH, year = 2022:
- treatment  emmean    SE  df lower.CL upper.CL
- 2L         0.1102 0.182 520  -0.2481   0.4685
- 4L         0.2650 0.193 520  -0.1135   0.6434
+ treatment    emmean    SE  df lower.CL upper.CL
+ 2L         1.10e-01 0.177 557  -0.2376   0.4571
+ 4L         3.13e-01 0.190 557  -0.0605   0.6857
 
 stress_level = Stressed, variety = CH, year = 2022:
- treatment  emmean    SE  df lower.CL upper.CL
- 2L         0.1143 0.205 520  -0.2881   0.5166
- 4L         0.4134 0.225 520  -0.0293   0.8560
+ treatment    emmean    SE  df lower.CL upper.CL
+ 2L         1.65e-01 0.202 557  -0.2321   0.5613
+ 4L         4.58e-01 0.222 557   0.0218   0.8948
 
 stress_level = Not Stressed, variety = CS, year = 2022:
- treatment  emmean    SE  df lower.CL upper.CL
- 2L        -0.2894 0.140 520  -0.5651  -0.0138
- 4L        -0.0533 0.140 520  -0.3289   0.2223
+ treatment    emmean    SE  df lower.CL upper.CL
+ 2L        -3.17e-01 0.133 557  -0.5788  -0.0562
+ 4L         9.88e-05 0.138 557  -0.2717   0.2719
 
 stress_level = Stressed, variety = CS, year = 2022:
- treatment  emmean    SE  df lower.CL upper.CL
- 2L        -0.1534 0.117 520  -0.3824   0.0756
- 4L         0.1547 0.145 520  -0.1298   0.4392
+ treatment    emmean    SE  df lower.CL upper.CL
+ 2L        -1.16e-01 0.114 557  -0.3401   0.1084
+ 4L         2.40e-02 0.134 557  -0.2398   0.2878
 
 stress_level = Not Stressed, variety = CH, year = 2023:
- treatment  emmean    SE  df lower.CL upper.CL
- 2L         0.2440 0.246 520  -0.2384   0.7263
- 4L         0.2655 0.186 520  -0.0991   0.6301
+ treatment    emmean    SE  df lower.CL upper.CL
+ 2L         4.12e-01 0.242 557  -0.0638   0.8875
+ 4L         4.29e-01 0.183 557   0.0696   0.7887
 
 stress_level = Stressed, variety = CH, year = 2023:
- treatment  emmean    SE  df lower.CL upper.CL
- 2L         0.1863 0.232 520  -0.2685   0.6411
- 4L         0.4894 0.193 520   0.1110   0.8678
+ treatment    emmean    SE  df lower.CL upper.CL
+ 2L         3.66e-01 0.228 557  -0.0829   0.8140
+ 4L         6.09e-01 0.190 557   0.2360   0.9822
 
 stress_level = Not Stressed, variety = CS, year = 2023:
- treatment  emmean    SE  df lower.CL upper.CL
- 2L        -0.4168 0.142 520  -0.6953  -0.1383
- 4L         0.0748 0.196 520  -0.3111   0.4607
+ treatment    emmean    SE  df lower.CL upper.CL
+ 2L        -4.59e-01 0.126 557  -0.7062  -0.2108
+ 4L        -9.08e-02 0.177 557  -0.4382   0.2565
 
 stress_level = Stressed, variety = CS, year = 2023:
- treatment  emmean    SE  df lower.CL upper.CL
- 2L        -0.1331 0.174 520  -0.4742   0.2080
- 4L        -0.1620 0.176 520  -0.5085   0.1846
+ treatment    emmean    SE  df lower.CL upper.CL
+ 2L        -2.14e-01 0.157 557  -0.5231   0.0942
+ 4L        -9.11e-02 0.166 557  -0.4174   0.2352
 
 Confidence level used: 0.95 

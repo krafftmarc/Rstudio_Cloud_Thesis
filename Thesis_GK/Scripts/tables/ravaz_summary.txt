@@ -1,0 +1,12 @@
+
+
+Table: Ravaz Index Summary by Variety and Balance Category
+
+|variety            |balance_category | n_blocks| mean_ravaz| sd_ravaz|
+|:------------------|:----------------|--------:|----------:|--------:|
+|Cabernet Sauvignon |Balanced         |       68|       4.68|     1.76|
+|Cabernet Sauvignon |Overcropped      |        3|      15.17|     4.89|
+|Cabernet Sauvignon |Undercropped     |       55|       2.05|     0.52|
+|Chardonnay         |Balanced         |       33|       6.11|     2.47|
+|Chardonnay         |Overcropped      |       19|      14.33|     3.68|
+|Chardonnay         |Undercropped     |       20|       1.75|     0.95|

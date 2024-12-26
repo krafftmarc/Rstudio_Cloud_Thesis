@@ -1,0 +1,9 @@
+
+
+Table: Summary of Statistical Analyses by Variety and Year
+
+|variety            | year| yield_treatment_f| yield_treatment_p| ravaz_treatment_f| ravaz_treatment_p| yield_mixed_aic| ravaz_mixed_aic|
+|:------------------|----:|-----------------:|-----------------:|-----------------:|-----------------:|---------------:|---------------:|
+|Cabernet Sauvignon | 2022|             0.782|             0.546|             0.171|             0.952|         106.256|         111.665|
+|Chardonnay         | 2022|             1.745|             0.158|             1.118|             0.361|         112.313|         127.788|
+|Cabernet Sauvignon | 2023|             1.626|             0.175|             0.111|             0.978|         266.650|         269.973|

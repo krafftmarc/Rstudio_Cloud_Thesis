@@ -1,0 +1,10 @@
+
+
+Table: Summary Statistics by Year and Variety
+
+| year.x|variety            | n_vines| mean_yield| sd_yield| mean_ravaz| sd_ravaz| mean_psi| sd_psi|
+|------:|:------------------|-------:|----------:|--------:|----------:|--------:|--------:|------:|
+|   2022|Cabernet Sauvignon |      36|       4.66|     1.38|       4.73|     3.50|   -10.78|     NA|
+|   2022|Chardonnay         |      48|       4.62|     2.36|       9.11|     5.47|   -10.14|     NA|
+|   2023|Cabernet Sauvignon |      90|       6.98|     1.91|       3.40|     2.13|   -10.78|     NA|
+|   2023|Chardonnay         |      24|       5.57|     2.31|       2.99|     1.46|   -10.01|     NA|

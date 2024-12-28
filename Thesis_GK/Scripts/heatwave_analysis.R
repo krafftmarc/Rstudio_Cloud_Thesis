@@ -454,6 +454,23 @@ leaf_temp_plot <- plot_treatment_response(
   "Leaf Temperature Response to Treatments During Heatwaves"
 )
 
+plot_tleaf_vs_anet <- function(data) {
+  ggplot(data, aes(x = A, y = Tleaf, color = stress_status, shape = water_amount)) +
+    geom_point(alpha = 0.7, size = 3) +
+    geom_smooth(method = "lm", se = TRUE, linetype = "dashed") +
+    facet_wrap(~ heatwave_period) +
+    labs(
+      title = "Leaf Temperature (Tleaf) vs. Net Photosynthesis (Anet)",
+      x = "Net Photosynthesis (Anet, µmol m⁻² s⁻¹)",
+      y = "Leaf Temperature (°C)",
+      color = "Stress Status",
+      shape = "Irrigation Treatment"
+    ) +
+    theme_custom
+}
+tleaf_anet_plot <- plot_tleaf_vs_anet(all_hw_data)
+
+
 cooling_plot <- plot_treatment_response(
   all_hw_data,
   "cooling_capacity",
@@ -486,6 +503,7 @@ print(leaf_temp_plot)
 print(cooling_plot)
 print(gsw_plot)
 print(cooling_gsw_relationship)
+print(tleaf_anet_plot)
 
 # Summarize statistical results
 summary(tleaf_analysis$model)
@@ -580,6 +598,14 @@ summary(gsw_analysis$model)
       width = 10, height = 7,
       dpi = 300
     )
+    
+    ggsave(
+      "figures/tleaf_vs_anet_by_heatwave.png",
+      plot = tleaf_anet_plot,
+      width = 12, height = 7,
+      dpi = 300
+    )
+    
     
     ggsave(
       "figures/cooling_gsw_relationship.png",

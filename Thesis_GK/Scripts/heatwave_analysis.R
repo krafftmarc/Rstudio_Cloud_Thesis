@@ -427,8 +427,12 @@ theme_custom <- theme_bw() +
     axis.text = element_text(size = 12),
     axis.title = element_text(size = 14),
     plot.title = element_text(size = 16, hjust = 0.5),
-    legend.position = "bottom"
+    legend.position = "bottom",
+    panel.grid.major = element_blank(),  # Remove major gridlines
+    panel.grid.minor = element_blank(),  # Remove minor gridlines
+    panel.border = element_rect(color = "black", fill = NA, size = 1)  # Keep border
   )
+
 
 # Function to create treatment response plots
 plot_treatment_response <- function(data, y_var, y_lab, title) {
@@ -458,7 +462,7 @@ plot_tleaf_vs_anet <- function(data) {
   ggplot(data, aes(x = A, y = Tleaf, color = stress_status, shape = water_amount)) +
     geom_point(alpha = 0.7, size = 3) +
     geom_smooth(method = "lm", se = TRUE, linetype = "dashed") +
-    facet_wrap(~ heatwave_period) +
+    facet_wrap(~ heatwave_period, scales = "free_x") +  # Adjust x-axis per facet
     labs(
       title = "Leaf Temperature (Tleaf) vs. Net Photosynthesis (Anet)",
       x = "Net Photosynthesis (Anet, µmol m⁻² s⁻¹)",
@@ -468,6 +472,7 @@ plot_tleaf_vs_anet <- function(data) {
     ) +
     theme_custom
 }
+
 tleaf_anet_plot <- plot_tleaf_vs_anet(all_hw_data)
 
 
